@@ -29,11 +29,11 @@ class UserInfo(models.Model):
 
 class UserRating(models.Model):
     rating_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(UserInfo, on_delete=models.CASCADE)
+    user_id = models.OneToOneField(UserInfo, on_delete=models.CASCADE)
     movie_id = models.IntegerField()
     rating = models.DecimalField(max_digits=2, decimal_places=1)
 
     class Meta:
         managed = False
         db_table = 'user_rating'
-        unique_together = (('user', 'movie_id'),)
+        unique_together = (('user_id', 'movie_id'),)

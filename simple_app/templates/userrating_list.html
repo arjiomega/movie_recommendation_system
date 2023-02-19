@@ -1,0 +1,53 @@
+<div class="main"></div>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+
+{% block content %}
+<header>
+    <nav class="navbar">
+      <a class="navbar-brand" href="#">Company Logo</a>
+      <ul class="navbar-menu">
+        <li class="navbar-item">
+          <a class="navbar-link" href="#">Home</a>
+        </li>
+        <li class="navbar-item">
+          <a class="navbar-link" href="#">About</a>
+        </li>
+        <li class="navbar-item">
+          <a class="navbar-link" href="#">Services</a>
+        </li>
+        <li class="navbar-item">
+          <a class="navbar-link" href="#">Contact</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+
+<h1>Userratings</h1>
+
+<div class="table-container">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Movie ID</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for userrating in userratings %}
+          <tr>
+            <td>{{ userrating.user_id }}</td>
+            <td>{{ userrating.movie_id }}</td>
+            <td>{{ userrating.rating }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+
+{% endblock %}
