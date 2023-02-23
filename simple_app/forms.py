@@ -1,11 +1,12 @@
 from django import forms
-from .models import simpleModel
+from .models import UserRating
 
-class simpleForm(forms.ModelForm):
+class userForm(forms.ModelForm):
     class Meta:
-        model = simpleModel
+        model = UserRating
 
         fields = [
-            "title",
-            "description",
+            "user",
+            "movie_id",
+            "rating"
         ]

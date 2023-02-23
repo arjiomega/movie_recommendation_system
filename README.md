@@ -12,6 +12,7 @@ THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT O
 	3. [Create Django App](#django_app)
 	4. [Run Django Server](#django_server)
 2. [AWS Database Setup](#aws_db)
+3. [React JS Setup](#react_setup)
 
 <br>
 
@@ -21,6 +22,7 @@ THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT O
 conda create --no-default-packages -n <env_name>
 conda activate <env_name>
 conda install python=3.9
+conda install nodejs=16.13.1
 ```
 
 ### Create Django Project <a name="django_proj"></a>

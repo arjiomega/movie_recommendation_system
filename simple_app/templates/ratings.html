@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GET USER_INFO</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<form method="GET" action="{% url 'display_rating' %}">
+    <label for="user_id">USER ID:</label>
+    <input type="text" id="user_id" name="user_id" class="form-control">
+    <button type="submit">Display</button>
+  </form>
+  
+  {% if rating %}
+    {% comment %} {% for content in rating %} {% endcomment %}
+    <p>test= {{ current_user }}</p>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class='user'>User ID</th>
+          <th>Movie ID</th>
+          <th class='rating'>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {% for userrating in page_obj %}
+          <tr>
+            <td>{{ userrating.user_id }}</td>
+            <td>{{ userrating.movie_id }}</td>
+            <td>{{ userrating.rating }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if page_obj.has_previous %}
+    <a href="{% url 'display_rating' %}?user_id={{current_user}}&page={{page_obj.previous_page_number}}">Previous Page</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+    <a href="{% url 'display_rating' %}?user_id={{current_user}}&page={{page_obj.next_page_number}}">Next Page</a>
+    {% endif %}
+
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="{% url 'display_rating' %}?user_id={{current_user}}&page={{page_obj.previous_page_number}}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </a>
+        </li>
+        {% endif %}
+        
+        <li class="page-item active"><a class="page-link" href="#">Page: {{ page_obj.number}} out of {{page_obj.paginator.num_pages}}</a></li>
+
+
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{% url 'display_rating' %}?user_id={{current_user}}&page={{page_obj.next_page_number}}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        </li>
+        {% endif %}
+
+        
+
+      </ul>
+    </nav>
+
+
+  {% endif %}
+
+
+  </body>
+</html>
+    {% comment %} <p>user_id: {{ rating.user_id }}</p>
+    <p>movie_id: {{ rating.movie_id }}</p>
+    <p>rating: {{ rating.rating }}</p> {% endcomment %}
+
+
+
+
+
+{% comment %} <div class="form_">
+    <!-- Create a Form -->
+    <form method="POST">
+        <!-- Security token by Django -->
+        {% csrf_token %}
+ 
+        <!-- form as paragraph -->
+        {{ form.as_p }}
+ 
+        <input type="submit" value="Update">
+    </form>
+ 
+</div> {% endcomment %}
+

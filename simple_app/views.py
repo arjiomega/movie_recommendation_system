@@ -1,9 +1,36 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
-
+from django.core.paginator import Paginator
 # Create your views here.
 
 from .models import UserRating
-#from .forms import simpleForm
+from .forms import userForm
+
+
+
+def home_view(request):
+    return render(request, 'base.html')
+
+def userrating_list(request):
+ 
+    user_id = request.GET.get('user_id')
+    rating = UserRating.objects.filter(user_id=user_id)#.first()
+
+    context = {}
+    context['current_user'] = user_id
+    context['rating'] = rating
+
+    paginator = Paginator(context['rating'],per_page=10)
+    page_number = request.GET.get('page',1)
+
+    context['page_obj'] = paginator.page(page_number)
+
+    return render(request, 'userrating_list.html', context)
+
+
+def testing(request):
+    context = {}
+    context['current_page'] = request.GET.get('page',1)
+    return render(request,'testing.html',context)
 
 # def create_view(request):
 #     context = {}
@@ -25,13 +52,6 @@ from .models import UserRating
 #     context["dataset"] = Userrating.objects.all()
 
 #     return render(request, "list_view.html", context)
-
-
-def userrating_list(request):
-    userratings = UserRating.objects.all()
-    return render(request, 'userrating_list.html', {'userratings': userratings[:10]})
-
-
 # # pass id attribute from urls
 # def detail_view(request, id):
 #     # dictionary for initial data with
@@ -39,10 +59,9 @@ def userrating_list(request):
 #     context ={}
 
 #     # add the dictionary during initialization
-#     context["data"] = simpleModel.objects.get(id = id)
+#     context["data"] = get_object_or_404(UserRating,rating_id = id)
 
 #     return render(request, "detail_view.html", context)
-
 
 # # update view for details
 # def update_view(request, id):
