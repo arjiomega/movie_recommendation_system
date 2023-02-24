@@ -19,6 +19,15 @@ class Ratings(models.Model):
         db_table = 'ratings'
 
 
+class MovieInfo(models.Model):
+    movie_id = models.IntegerField(primary_key=True)
+    imdb_id = models.IntegerField()
+    tmdb_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'movie_info'
+
 class UserInfo(models.Model):
     user_id = models.IntegerField(primary_key=True)
 

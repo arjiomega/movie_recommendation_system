@@ -2,13 +2,60 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.core.paginator import Paginator
 # Create your views here.
 
-from .models import UserRating
+from .models import UserRating,MovieInfo
 from .forms import userForm
+import requests
+import json
 
-
+tmdb_api_key = '3ff7e7fd6d5dfaa54dc83a776a962a50'
+base_url = 'https://api.themoviedb.org/3/'
 
 def home_view(request):
-    return render(request, 'base.html')
+
+    # popular movies request (Get 10 image links)
+    url = f'{base_url}/movie/popular?api_key={tmdb_api_key}&language=en-US&page=1'
+    response = requests.get(url)
+    popular_data = json.loads(response.text)
+    context = {}
+    pop_list = []
+    backdrop = []
+    title = []
+
+    for i in range(12):
+        pop_list.append(popular_data['results'][i]['poster_path'])
+        backdrop.append(popular_data['results'][i]['backdrop_path'])
+        title.append(popular_data['results'][i]['original_title'])
+    
+    context['pop_poster'] = pop_list
+    context['pop_backdrop'] = backdrop
+
+    # Load Top 10 Movies for Romance 10749, Comedy 35, Science Fiction 878
+    romance_poster = []
+    comedy_poster = []
+    scifi_poster = []
+    rom_url = f'{base_url}/discover/movie?api_key={tmdb_api_key}&with_genres=10749'
+    response = requests.get(rom_url)
+    rom_data = json.loads(response.text)
+
+    com_url = f'{base_url}/discover/movie?api_key={tmdb_api_key}&with_genres=35'
+    response = requests.get(com_url)
+    com_data = json.loads(response.text)
+
+    scifi_url = f'{base_url}/discover/movie?api_key={tmdb_api_key}&with_genres=878'
+    response = requests.get(scifi_url)
+    scifi_data = json.loads(response.text)
+    
+    for i in range(12):
+        romance_poster.append(rom_data['results'][i]['poster_path'])
+        comedy_poster.append(com_data['results'][i]['poster_path'])
+        scifi_poster.append(scifi_data['results'][i]['poster_path'])
+    
+    context['romance_poster'] = romance_poster
+    context['comedy_poster'] = comedy_poster
+    context['scifi_poster'] = scifi_poster
+
+  
+    return render(request, 'base.html',context)
 
 def userrating_list(request):
  

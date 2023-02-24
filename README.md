@@ -2,6 +2,7 @@
 # DJANGO RECOMMENDER SYSTEMS PROJECT
 
 THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT OPPORTUNITY TO APPLY RECOMMENDER SYSTEMS TO DJANGO WITH CRUD THAT IS ALSO CONNECTED TO AWS.
+<br>
 
 <br>
 
@@ -65,7 +66,7 @@ CREATE TABLE ratings (
 CREATE TABLE user_rating (
    	rating_id SERIAL,
         	user_id INTEGER REFERENCES user_info (user_id),
-        	movie_id INTEGER,
+        	movie_id INTEGER, # CHANGE THIS TO FOREIGN KEY
         	rating NUMERIC(2,1) NOT NULL,
         	PRIMARY KEY (user_id, movie_id)
     	);
@@ -73,13 +74,20 @@ CREATE TABLE user_rating (
 CREATE TABLE user_info (
             user_id INTEGER PRIMARY KEY
         );
+
+CREATE TABLE movie_info (
+            movie_id INTEGER PRIMARY KEY,
+            imdb_id INTEGER,
+            tmdb_id INTEGER
+        );
 ```
 
 <br>
 
-- Load csv to ratings table using psql
+- Load CSVs to ratings and movie_info table using psql
 ```cmd
 \copy ratings(user_id, movie_id, rating, timestamp) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
+\copy movie_info(movie_id, imdb_id, tmdb_id) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
 ```
 **NOTE**: This is done so we can load easily the data to our tables. We can drop this later on to save space on AWS RDS.
 
