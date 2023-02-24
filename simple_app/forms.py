@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserRating
+from .models import UserRating,UserInfo
 
 class userForm(forms.ModelForm):
     class Meta:
@@ -9,4 +9,12 @@ class userForm(forms.ModelForm):
             "user",
             "movie_id",
             "rating"
+        ]
+
+class myUserForm(forms.ModelForm):
+    class Meta:
+        model = UserInfo
+
+        fields = [
+            "user_id"
         ]

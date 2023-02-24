@@ -32,7 +32,7 @@ class UserInfo(models.Model):
     user_id = models.IntegerField(primary_key=True)
 
     class Meta:
-        managed = False
+        #managed = False
         db_table = 'user_info'
 
 

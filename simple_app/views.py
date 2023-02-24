@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.core.paginator import Paginator
 # Create your views here.
 
-from .models import UserRating,MovieInfo
-from .forms import userForm
+from .models import UserRating,MovieInfo,UserInfo
+from .forms import userForm,myUserForm
 import requests
 import json
 
@@ -73,42 +73,42 @@ def userrating_list(request):
 
     return render(request, 'userrating_list.html', context)
 
+def add_MyUser(request):
+    context = {}
+
+    if request.method == "POST":
+        user_id = request.POST.get('user_id')
+        if not user_id:
+            context['error'] = 'Dont leave it blank'
+        elif int(user_id) < 300000:
+            context['error'] = 'New user id must be greater than 300000'
+        elif int(user_id) > 999999:
+            context['error'] = 'User id limited to 6 digits only'
+        elif UserInfo.objects.filter(user_id=user_id).exists():
+            context['error'] = f'User ID {user_id} already exists'
+            print(context['error'])
+        else:
+            new_user = UserInfo(user_id = int(user_id))
+            print(new_user.user_id)
+            new_user.save()
+            context['success'] = f'User {user_id} added successfully'
+
+    return render(request, "Enter.html", context)
+
+def update_MyUser(request):
+    context = {}
+    if request.method == 'POST':
+        user = request.POST.get('user_id')
+        movie_id = request.POST.get('movie_id')
+        rating = request.POST.get('user_id')
+
+    return render(request,"recommend.html",context)
 
 def testing(request):
     context = {}
     context['current_page'] = request.GET.get('page',1)
     return render(request,'testing.html',context)
 
-# def create_view(request):
-#     context = {}
-
-#     form = simpleForm(request.POST or None)
-#     if form.is_valid():
-#         form.save()
-
-#     context['form'] = form
-
-#     return render(request, "create_view.html", context)
-
-# def list_view(request):
-#     # dictionary for initial data with
-#     # field names as keys
-#     context ={}
-
-#     # add the dictionary during initialization
-#     context["dataset"] = Userrating.objects.all()
-
-#     return render(request, "list_view.html", context)
-# # pass id attribute from urls
-# def detail_view(request, id):
-#     # dictionary for initial data with
-#     # field names as keys
-#     context ={}
-
-#     # add the dictionary during initialization
-#     context["data"] = get_object_or_404(UserRating,rating_id = id)
-
-#     return render(request, "detail_view.html", context)
 
 # # update view for details
 # def update_view(request, id):

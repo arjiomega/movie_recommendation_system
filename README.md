@@ -80,6 +80,33 @@ CREATE TABLE movie_info (
             imdb_id INTEGER,
             tmdb_id INTEGER
         );
+
+CREATE TABLE movie_metadata (
+	adult BOOLEAN,
+	belongs_to_collection JSON,
+	budget INTEGER,
+	genres jsonb,
+	homepage varchar(255),
+	tmdb_id INTEGER,
+	imdb_id varchar(10),
+	original_language varchar(10),
+	original_title varchar(255),
+	overview text,
+	popularity NUMERIC(3,2),
+	poster_path text,
+	production_companies jsonb, 
+	production_countries jsonb,
+	release_date DATE,
+	revenue BIGINT,
+	runtime INT,
+	spoken_languages jsonb,
+	status varchar(10),
+	tagline varchar(255),
+	title varchar(255),
+	video BOOLEAN,
+	vote_average NUMERIC(2,1),
+	vote_count INTEGER
+);
 ```
 
 <br>
@@ -88,6 +115,7 @@ CREATE TABLE movie_info (
 ```cmd
 \copy ratings(user_id, movie_id, rating, timestamp) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
 \copy movie_info(movie_id, imdb_id, tmdb_id) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
+\copy movie_metadata(adult,belongs_to_collection::json,budget,genres,homepage,tmdb_id,imdb_id,original_language,original_title,overview,popularity,poster_path,production_companies,production_countries,release_date,revenue,runtime,spoken_languages,status,tagline,title,video,vote_average,vote_count) FROM 'C:\Users\rjome\simple_django_project\data\movies_metadata.csv' WITH (FORMAT CSV, HEADER);
 ```
 **NOTE**: This is done so we can load easily the data to our tables. We can drop this later on to save space on AWS RDS.
 
