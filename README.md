@@ -115,7 +115,7 @@ CREATE TABLE movie_metadata (
 ```cmd
 \copy ratings(user_id, movie_id, rating, timestamp) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
 \copy movie_info(movie_id, imdb_id, tmdb_id) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
-\copy movie_metadata(adult,belongs_to_collection::json,budget,genres,homepage,tmdb_id,imdb_id,original_language,original_title,overview,popularity,poster_path,production_companies,production_countries,release_date,revenue,runtime,spoken_languages,status,tagline,title,video,vote_average,vote_count) FROM 'C:\Users\rjome\simple_django_project\data\movies_metadata.csv' WITH (FORMAT CSV, HEADER);
+\copy movie_metadata(adult,belongs_to_collection,budget,genres,homepage,tmdb_id,imdb_id,original_language,original_title,overview,popularity,poster_path,production_companies,production_countries,release_date,revenue,runtime,spoken_languages,status,tagline,title,video,vote_average,vote_count) FROM 'C:\Users\rjome\simple_django_project\data\movies_metadata.csv' WITH (FORMAT CSV, HEADER, QUOTE '"');
 ```
 **NOTE**: This is done so we can load easily the data to our tables. We can drop this later on to save space on AWS RDS.
 

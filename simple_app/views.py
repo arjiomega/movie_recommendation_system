@@ -95,14 +95,79 @@ def add_MyUser(request):
 
     return render(request, "Enter.html", context)
 
+temp_list = []
 def update_MyUser(request):
+    '''
+    TODO:
+    1. Recommend movies
+    '''
     context = {}
+
+    # List of genres
+    url = f'{base_url}/genre/movie/list?api_key={tmdb_api_key}&language=en-US'
+    response = requests.get(url)
+    genre_json = json.loads(response.text)
+
+    genre_list = []
+    genre_ids = []
+    for i in genre_json['genres']:
+        genre_list.append(i['name'])
+        genre_ids.append(i['id'])
+    context['genres'] = genre_list
+    context['id'] = genre_ids
+    get_genre_id = {context['genres'][i]: context['id'][i] for i in range(len(context['genres']))}
+
+    year = ""
+    load_genres = ""
+    if request.method == 'GET':
+        temp_list.clear()
+        print("GET")
+        user = request.GET.get('user_id')
+        movie_id = request.GET.get('movie_id')
+        rating = request.GET.get('user_id')
+        chosen_genres = request.GET.getlist('genres[]')
+        year = request.GET.get('datepicker')
+        context['year'] = year
+        #print(chosen_genres)
+        #print(year)
+        chosen_genres_id = [get_genre_id[genre] for genre in chosen_genres]
+
+        load_genres = ",".join(str(x) for x in chosen_genres)
+
+        context['genres_text'] = ", ".join(str(x) for x in chosen_genres)
+
+    
     if request.method == 'POST':
-        user = request.POST.get('user_id')
-        movie_id = request.POST.get('movie_id')
-        rating = request.POST.get('user_id')
+        #print("yes")
+        link = request.POST.get('link')
+        print(link)
+        temp_list.append(int(link))
+        context['temp_list'] = temp_list
+        print(context['temp_list'])
+        #print(type(link))
+        gender = request.POST.get('gender')
+        #print(gender)
+
+    
+    context['temp_list'] = temp_list
+    # Get movie suggestions
+    url = f'{base_url}discover/movie?api_key={tmdb_api_key}&language=en-US&sort_by=popularity.desc&primary_release_year={year}&with_genres={load_genres}&page=1?'
+    #print(url)
+    response = requests.get(url)
+    movies = json.loads(response.text)
+
+
+    context['movies'] = movies['results']#{"poster"  : [movie['poster_path'] for movie in movies['results']],
+    #                     "movie_id": [movie['id'] for movie in movies['results']],
+    #                     "movie_name": [movie['original_title'] for movie in movies['results']],
+    #                     "range": list(range(len(movies['results'])))
+    #                     }
+
+    
 
     return render(request,"recommend.html",context)
+
+
 
 def testing(request):
     context = {}

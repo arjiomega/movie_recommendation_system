@@ -43,6 +43,6 @@ class UserRating(models.Model):
     rating = models.DecimalField(max_digits=2, decimal_places=1)
 
     class Meta:
-        managed = False
+        #managed = False
         db_table = 'user_rating'
         unique_together = (('user', 'movie_id'),)
