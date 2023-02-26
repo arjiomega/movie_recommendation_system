@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.contrib.auth import logout
 from django.core.paginator import Paginator
 # Create your views here.
 
@@ -119,51 +120,136 @@ def update_MyUser(request):
 
     year = ""
     load_genres = ""
+    context['genres_text'] = ''
+    context['year'] = ''
+
+    user_id = request.session.get('user_id')
+    if user_id:
+        context['user_logged'] = int(user_id)
+
     if request.method == 'GET':
+        print("\n---------------------GET------------------------\n")
         temp_list.clear()
-        print("GET")
-        user = request.GET.get('user_id')
+        #user = request.GET.get('user_id')
         movie_id = request.GET.get('movie_id')
         rating = request.GET.get('user_id')
         chosen_genres = request.GET.getlist('genres[]')
         year = request.GET.get('datepicker')
         context['year'] = year
-        #print(chosen_genres)
-        #print(year)
+
         chosen_genres_id = [get_genre_id[genre] for genre in chosen_genres]
 
-        load_genres = ",".join(str(x) for x in chosen_genres)
+        load_genres = ",".join(str(x) for x in chosen_genres_id)
 
         context['genres_text'] = ", ".join(str(x) for x in chosen_genres)
 
-    
-    if request.method == 'POST':
-        #print("yes")
-        link = request.POST.get('link')
-        print(link)
-        temp_list.append(int(link))
-        context['temp_list'] = temp_list
-        print(context['temp_list'])
-        #print(type(link))
-        gender = request.POST.get('gender')
-        #print(gender)
+
+        ###### GET MOVIE ID ############
+        # GET LIST OF MOVIES USER WATCHED
+        user_rating = UserRating.objects.filter(user_id=int(user_id))
+        context['movies_watched'] = [rating.movie_id for rating in user_rating]
+        print("MOVIES WATCHED: ",context['movies_watched'])
+
+        ################################
+
+        print("\n---------------------END GET------------------------\n")
 
     
+
+    if request.method == 'POST':
+        print("------------------POST-------------------------")
+        # LOGIN
+        
+
+        # Check if the user is already logged in
+        user_id = request.POST.get('user_id')
+        if user_id:
+            print("THERE IS POST")
+            print(user_id)
+            request.session['user_id'] = user_id
+            context['user_logged'] = int(user_id)
+        else:
+            print("THERE IS NO POST, USE SESSION")
+            print(user_id)
+            user_id = request.session.get('user_id')
+            context['user_logged'] = int(user_id)
+
+        ## REPLACE THIS TO PROPER NAMING
+        select_movie = request.POST.get('select_movie')
+
+        # CHECK IF USER ID IS ENTERED
+        if not user_id:
+            context['error'] = 'You need to input your user id'
+        # CHECK IF USER ID IS VALID (USER_ID > 300000)
+        elif int(user_id) < 300000:
+            context['error'] = 'User id must be greater than 300000'
+        # CHECK IF USER ID IS VALID (USER_ID LENGTH OF 6)  
+        elif int(user_id) > 999999:
+            context['error'] = 'User id limited to 6 digits only'
+        # CHECK IF USER_ID DOES NOT EXIST IN USER_INFO
+        elif not UserInfo.objects.filter(user_id=int(user_id)).exists():
+            context['error'] = f'User ID {user_id} does not exists'
+        else:
+            if select_movie:
+                #CHECK IF MOVIE_ID ALREADY EXISTS FOR THE USER_ID
+                if UserRating.objects.filter(user_id=int(user_id),movie_id=int(select_movie)).exists():
+                    context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
+                    print(f'Movie ID {select_movie} for User ID {user_id} already exists')
+                else:
+                    ###### GET MOVIE ID ############
+                    # GET LIST OF MOVIES USER WATCHED
+                    user_rating = UserRating.objects.filter(user_id=int(user_id))
+                    context['movies_watched'] = [rating.movie_id for rating in user_rating]
+
+                    # get movie title from movie_id
+                    url = f"{base_url}/movie/{select_movie}?api_key={tmdb_api_key}&language=en-US"
+                    response = requests.get(url)
+                    movie_detail = json.loads(response.text)
+
+                    if 'movie_names' not in locals():
+                        movie_names = []
+                    movie_names.append(movie_detail['original_title'])
+                    print("TEST: ",movie_names)
+                    context["movie_names"] = movie_names
+
+                    print("MOVIES WATCHED: ",context['movies_watched'])
+        
+                    ################################
+
+                    ############# ADD TO USER #####################
+                    print(f"user_id {type(user_id)} {user_id}")
+                    print("LOAD TO USER: ",user_id,int(select_movie))
+                    add_movie = UserRating(user_id = int(user_id),movie_id=int(select_movie))
+                    print(f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.movie_id}")
+                    add_movie.save()
+                    context['success'] = f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.movie_id}"
+                    ###############################################
+
+
+        print("------------------END POST-------------------------")
+
+    
+
     context['temp_list'] = temp_list
     # Get movie suggestions
     url = f'{base_url}discover/movie?api_key={tmdb_api_key}&language=en-US&sort_by=popularity.desc&primary_release_year={year}&with_genres={load_genres}&page=1?'
-    #print(url)
+    
     response = requests.get(url)
     movies = json.loads(response.text)
 
-
-    context['movies'] = movies['results']#{"poster"  : [movie['poster_path'] for movie in movies['results']],
-    #                     "movie_id": [movie['id'] for movie in movies['results']],
-    #                     "movie_name": [movie['original_title'] for movie in movies['results']],
-    #                     "range": list(range(len(movies['results'])))
-    #                     }
-
     
+    context['movies'] = movies['results']
+
+    # PRINT
+    print("\n---------------------FINAL------------------------\n")
+    print("USER LOGGED: ",request.session['user_id'])
+    print("CHOSEN YEAR: ",context['year'])
+    print("CHOSEN GENRES: ",context['genres_text'])
+    print("CURRENT URL: ",url)
+    print("ADDED MOVIES: ",context['temp_list'])
+    #print("ADD TO USER_RATING: ",add_movie)
+    print("\n--------------------END FINAL----------------------\n")
+    ###################################################
 
     return render(request,"recommend.html",context)
 

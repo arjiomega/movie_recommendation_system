@@ -67,7 +67,7 @@ CREATE TABLE user_rating (
    	rating_id SERIAL,
         	user_id INTEGER REFERENCES user_info (user_id),
         	movie_id INTEGER, # CHANGE THIS TO FOREIGN KEY
-        	rating NUMERIC(2,1) NOT NULL,
+        	rating NUMERIC(2,1),
         	PRIMARY KEY (user_id, movie_id)
     	);
 

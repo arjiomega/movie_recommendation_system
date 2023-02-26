@@ -28,7 +28,7 @@
   </style>
 </head>
     <body>
-
+        <!--HEADER-->
         <nav class="navbar navbar-expand-lg bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'home_view' %}">Movie Recommender System</a>
@@ -53,6 +53,65 @@
                 </div>
             </div>
         </nav>
+        <!--END HEADER-->
+
+        <!-- MODAL -->
+        
+        {% comment %} <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+        
+        <!-- END MODAL -->
+  
+
+        <!--LOGIN-->
+        <div class="container mt-3">
+            <div class="mt-4 p-5 bg-primary text-white rounded">
+                <h1>Enter user id to add movies to your list</h1> 
+                <form method="POST" action="{% url 'update' %}" class="was-validated">
+                    {% csrf_token %}
+                    <div class="mb-3 mt-3">
+                        <label for="user_id" class="form-label">User id:</label>
+                
+                        <input type="text" id="user_id" name="user_id" class="form-control" placeholder="Enter user id" required>
+                        <div class="valid-feedback"></div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <button type="submit" class="btn btn-light">LOGIN</button>
+                </form>
+                {% if user_logged %}
+                    <div class=''>
+                        <h3 class="badge text-wrap mt-5 bg-light fw-bold text-dark">USER ID: {{user_logged}}</h3>
+                        <h3 class="badge text-wrap mt-5 bg-light fw-bold text-dark">Movies: {{movies_watched}}</h3>
+                    </div>
+                {% endif %}
+
+                {% if error %}
+                    <h1>{{error}}</h1>
+                {% endif %}
+                {% if success %}
+                    <h1>{{success}}</h1>
+                {% endif %}
+            </div>
+            
+            
+        </div>
+        
+        <!--END LOGIN-->
 
         <div class="container mt-5">
             <form method="GET" action="{% url 'update' %}">
@@ -69,64 +128,49 @@
                 <button type="submit" class="btn btn-light mt-3">Display</button>
             </form>
 
-            {% comment %} <div class="choose mt-5">
+            <!--DISPLAY CHOICES-->
+            <div class="mt-5">
                 <h3>Genres</h3>
                 <p>{{genres_text}}</p>
                 <h3>Year: {{year}}</h3>
-                {% if movie.poster %}
-  
+                <form id="my-form">
+                    {% csrf_token %}
                     <div class="row row-cols-4 row-cols-lg-4">
-                        {% for link in movie.poster %}
-                            <div class="col mb-3">
-                                <form id="my-form-{{forloop.counter}}" method="POST" action="{% url 'update' %}">
-                                    {% csrf_token %}
-                                    <input type="radio" name="gender" class="sr-only" id="male{{forloop.counter}}" value="{{forloop.counter}}">
-                                    <label for="male{forloop.counter}">
-                                        <img src="https://image.tmdb.org/t/p/w185{{link}}" alt="male">
+                        {% for movie in movies %}
+                   
+                                <div class="col mb-4">
+                                    <input type="radio" name="gender" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <label for="male{{ forloop.counter }}">
+                                        <img src="https://image.tmdb.org/t/p/w185{{movie.poster_path}}" alt="{{movie.original_title}}">
                                     </label>
-                                </form>
-                            </div>
+                                </div>
+                          
                         {% endfor %}
                     </div>
-                    <button type="submit" class="btn btn-light mt-3">Add to List</button>
                 </form>
-                {% endif %}
-            </div> {% endcomment %}
-            <form id="my-form">
-                {% csrf_token %}
-                <div class="row row-cols-4 row-cols-lg-4">
-                    {% for movie in movies %}
-                        {% if movie.id not in temp_list%}
-                            <div class="col mb-4">
-                                <input type="radio" name="gender" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}">
-                                <label for="male{{ forloop.counter }}">
-                                    <img src="https://image.tmdb.org/t/p/w185{{movie.poster_path}}" alt="{{movie.original_title}}">
-                                </label>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </form>
-
-            <fieldset>
-                <legend>
-                    Please select gender
-                </legend>
-                <input type="radio" name="gender" class="sr-only" id="male">
-                <label for="male">
-                    <img src="http://findicons.com/files/icons/1688/web_blog/48/user_male_white_red_brown.png" alt="male">
-                </label>
-                <input type="radio" name="gender" class="sr-only" id="female">
-                <label for="female">
-                    <img src="http://findicons.com/files/icons/1688/web_blog/48/user_female_white_pink_black.png" alt="female">
-                </label>
-            </fieldset>
+            </div>
+             <!--END DISPLAY CHOICES-->
 
 
         </div>
 
+        <div class="container mt-5">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                <div class="col-md-4 d-flex align-items-center">
+                <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+                <span class="mb-3 mb-md-0 text-muted">© 2023 Richard Omega</span>
+                </div>
+            
+                <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
+                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
+                </ul>
+            </footer>
+        </div>
     
-        
         <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
         <script>
             new MultiSelectTag('genres')  // id
@@ -141,27 +185,29 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            // JavaScript code
             $(document).ready(function() {
                 $('#my-form input[type="radio"]').on('change', function() {
-                    var selectedLink = $('input[name="gender"]:checked').val();
-                    $(this).closest('.col').remove();
-                    $.ajax({
-                        url: '{% url "update" %}',
-                        type: 'POST',
-                        data: {
-                            'link': selectedLink,
-                            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
-                        },
-                        success: function(response) {
-                            console.log(response);
-                        },
-                        error: function(xhr) {
-                            console.log(xhr.responseText);
-                        }
-                    });
+                  var $col = $(this).closest('.col');
+                  var movieId = $col.find('input[name="gender"]').val();
+                  var select_movie = $('input[name="gender"]:checked').val();
+                  $.ajax({
+                    url: '{% url "update" %}',
+                    type: 'POST',
+                    data: {
+                      'select_movie': select_movie,
+                      'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function(response) {
+                      console.log(response);
+                    },
+                    error: function(xhr) {
+                      console.log(xhr.responseText);
+                    }
+                  });
                 });
-            });
+              });
         </script>
+
+        
 </body>
 </html>
