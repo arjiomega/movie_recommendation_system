@@ -18,12 +18,14 @@
         cursor: pointer;
         filter: grayscale(100%);
       }
-      
       label:hover {
         filter: grayscale(0);
       }
       input[type="radio"] {
         display: none; /* hide the radio button */
+      }
+      input[type="radio"]:checked + label {
+        filter: grayscale(0);
       }
   </style>
 </head>
@@ -92,23 +94,11 @@
                         <div class="invalid-feedback"></div>
                     </div>
                     <button type="submit" class="btn btn-light">LOGIN</button>
+                    <br>
+                    <p class='badge mt-3 bg-light fw-bold text-danger'>Note: You might have to refresh the page again for the updates to show</p>
                 </form>
-                {% if user_logged %}
-                    <div class=''>
-                        <h3 class="badge text-wrap mt-5 bg-light fw-bold text-dark">USER ID: {{user_logged}}</h3>
-                        <h3 class="badge text-wrap mt-5 bg-light fw-bold text-dark">Movies: {{movies_watched}}</h3>
-                    </div>
-                {% endif %}
-
-                {% if error %}
-                    <h1>{{error}}</h1>
-                {% endif %}
-                {% if success %}
-                    <h1>{{success}}</h1>
-                {% endif %}
             </div>
-            
-            
+     
         </div>
         
         <!--END LOGIN-->
@@ -125,28 +115,44 @@
                 <h3 class='mt-3'>Year</h3>
                 <input type="text" class="form-control mt-1" name="datepicker" id="datepicker" />
             
-                <button type="submit" class="btn btn-light mt-3">Display</button>
+                <button type="submit" class="btn btn-primary mt-3">Display</button>
             </form>
+
+            <div>
+                {% if success %}
+                    <h3 class="badge mt-5 text-wrap bg-success fw-bold text-light">{{success}}</h3>  
+                {% else %}
+                    <h3 class="badge mt-5 text-wrap bg-danger fw-bold text-light">{{error}}</h3>
+                {% endif %}
+            </div>
+
+            {% if user_logged %}
+                <div class='mt-3 mb-3'>
+                    <h3 class="badge text-wrap bg-primary fw-bold text-light">USER ID: {{user_logged}}</h3>
+                    <h3 class="badge text-wrap bg-primary fw-bold text-light">Movies: {{movie_names}}</h3>
+                </div>
+            {% endif %}
 
             <!--DISPLAY CHOICES-->
             <div class="mt-5">
                 <h3>Genres</h3>
                 <p>{{genres_text}}</p>
                 <h3>Year: {{year}}</h3>
-                <form id="my-form">
+                <form id="my-form" method="POST" action="{% url 'update' %}">
                     {% csrf_token %}
                     <div class="row row-cols-4 row-cols-lg-4">
                         {% for movie in movies %}
-                   
+                            {% if movie.id not in movies_watched %}
                                 <div class="col mb-4">
-                                    <input type="radio" name="gender" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <input type="radio" name="select_movie" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <label for="male{{ forloop.counter }}">
                                         <img src="https://image.tmdb.org/t/p/w185{{movie.poster_path}}" alt="{{movie.original_title}}">
                                     </label>
                                 </div>
-                          
+                            {% endif %}
                         {% endfor %}
                     </div>
+                    <button type="submit" class="btn btn-primary mt-3">Add to list</button>
                 </form>
             </div>
              <!--END DISPLAY CHOICES-->
@@ -182,14 +188,31 @@
                 minViewMode: "years"
             });
         </script>
+        <script>
+            // Add event listener to all radio inputs with img labels
+            const radioInputs = document.querySelectorAll('input[type="radio"] + label');
+            radioInputs.forEach(function(label) {
+                label.addEventListener('click', function(event) {
+                // Toggle the grayscale filter when the label is clicked
+                const input = event.currentTarget.previousElementSibling;
+                if (input.checked) {
+                    label.style.filter = 'grayscale(100%)';
+                    input.checked = false;
+                } else {
+                    label.style.filter = 'grayscale(0)';
+                    input.checked = true;
+                }
+                });
+            });
+        </script>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
                 $('#my-form input[type="radio"]').on('change', function() {
                   var $col = $(this).closest('.col');
-                  var movieId = $col.find('input[name="gender"]').val();
-                  var select_movie = $('input[name="gender"]:checked').val();
+                  var movieId = $col.find('input[name="select_movie"]').val();
+                  var select_movie = $('input[name="select_movie"]:checked').val();
                   $.ajax({
                     url: '{% url "update" %}',
                     type: 'POST',
@@ -206,8 +229,8 @@
                   });
                 });
               });
-        </script>
-
+        </script> {% endcomment %}
+        
         
 </body>
 </html>

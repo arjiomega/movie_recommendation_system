@@ -54,8 +54,14 @@ def home_view(request):
     context['romance_poster'] = romance_poster
     context['comedy_poster'] = comedy_poster
     context['scifi_poster'] = scifi_poster
+    
+    # USER RECOMMENDATION
+    if 'user_id' in request.session:
+        context['user_id'] = request.session.get('user_id')
+        print(context['user_id'])
+    ########################################################
 
-  
+
     return render(request, 'base.html',context)
 
 def userrating_list(request):
@@ -154,23 +160,16 @@ def update_MyUser(request):
 
         print("\n---------------------END GET------------------------\n")
 
-    
 
     if request.method == 'POST':
         print("------------------POST-------------------------")
-        # LOGIN
-        
 
         # Check if the user is already logged in
         user_id = request.POST.get('user_id')
         if user_id:
-            print("THERE IS POST")
-            print(user_id)
             request.session['user_id'] = user_id
             context['user_logged'] = int(user_id)
         else:
-            print("THERE IS NO POST, USE SESSION")
-            print(user_id)
             user_id = request.session.get('user_id')
             context['user_logged'] = int(user_id)
 
@@ -190,32 +189,24 @@ def update_MyUser(request):
         elif not UserInfo.objects.filter(user_id=int(user_id)).exists():
             context['error'] = f'User ID {user_id} does not exists'
         else:
+
+            user_rating = UserRating.objects.filter(user_id=int(user_id))
+            context['movies_watched'] = [rating.movie_id for rating in user_rating]
+            request.session['movies_watched'] = context['movies_watched']
+
+            movie_names = []
+            for movie in context['movies_watched']:
+                # get movie title from movie_id
+                url = f"{base_url}/movie/{movie}?api_key={tmdb_api_key}&language=en-US"
+                response = requests.get(url)
+                movie_detail = json.loads(response.text)
+                movie_names.append(movie_detail['original_title'])
+            context["movie_names"] = movie_names
+            request.session['movie_names'] = movie_names
+
             if select_movie:
                 #CHECK IF MOVIE_ID ALREADY EXISTS FOR THE USER_ID
-                if UserRating.objects.filter(user_id=int(user_id),movie_id=int(select_movie)).exists():
-                    context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
-                    print(f'Movie ID {select_movie} for User ID {user_id} already exists')
-                else:
-                    ###### GET MOVIE ID ############
-                    # GET LIST OF MOVIES USER WATCHED
-                    user_rating = UserRating.objects.filter(user_id=int(user_id))
-                    context['movies_watched'] = [rating.movie_id for rating in user_rating]
-
-                    # get movie title from movie_id
-                    url = f"{base_url}/movie/{select_movie}?api_key={tmdb_api_key}&language=en-US"
-                    response = requests.get(url)
-                    movie_detail = json.loads(response.text)
-
-                    if 'movie_names' not in locals():
-                        movie_names = []
-                    movie_names.append(movie_detail['original_title'])
-                    print("TEST: ",movie_names)
-                    context["movie_names"] = movie_names
-
-                    print("MOVIES WATCHED: ",context['movies_watched'])
-        
-                    ################################
-
+                if not UserRating.objects.filter(user_id=int(user_id),movie_id=int(select_movie)).exists():
                     ############# ADD TO USER #####################
                     print(f"user_id {type(user_id)} {user_id}")
                     print("LOAD TO USER: ",user_id,int(select_movie))
@@ -224,6 +215,11 @@ def update_MyUser(request):
                     add_movie.save()
                     context['success'] = f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.movie_id}"
                     ###############################################
+                else:
+                    context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
+                    print(f'Movie ID {select_movie} for User ID {user_id} already exists')
+
+                    
 
 
         print("------------------END POST-------------------------")
@@ -239,17 +235,6 @@ def update_MyUser(request):
 
     
     context['movies'] = movies['results']
-
-    # PRINT
-    print("\n---------------------FINAL------------------------\n")
-    print("USER LOGGED: ",request.session['user_id'])
-    print("CHOSEN YEAR: ",context['year'])
-    print("CHOSEN GENRES: ",context['genres_text'])
-    print("CURRENT URL: ",url)
-    print("ADDED MOVIES: ",context['temp_list'])
-    #print("ADD TO USER_RATING: ",add_movie)
-    print("\n--------------------END FINAL----------------------\n")
-    ###################################################
 
     return render(request,"recommend.html",context)
 
