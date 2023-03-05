@@ -1,11 +1,20 @@
 from django import forms
-from .models import simpleModel
+from .models import UserRating,UserInfo
 
-class simpleForm(forms.ModelForm):
+class userForm(forms.ModelForm):
     class Meta:
-        model = simpleModel
+        model = UserRating
 
         fields = [
-            "title",
-            "description",
+            "user",
+            "movie_id",
+            "rating"
+        ]
+
+class myUserForm(forms.ModelForm):
+    class Meta:
+        model = UserInfo
+
+        fields = [
+            "user_id"
         ]
