@@ -123,28 +123,17 @@ class DjangoSession(models.Model):
 
 
 class MovieInfo(models.Model):
-    movie_id = models.IntegerField(primary_key=True)
-    imdb_id = models.IntegerField(blank=True, null=True)
-    tmdb_id = models.IntegerField(blank=True, null=True)
+    tmdb_id = models.IntegerField(primary_key=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'movie_info'
 
 
-class Ratings(models.Model):
-    user_id = models.IntegerField()
-    movie_id = models.IntegerField()
-    rating = models.DecimalField(max_digits=2, decimal_places=1)
-    timestamp = models.BigIntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'ratings'
-
-
 class UserInfo(models.Model):
     user_id = models.IntegerField(primary_key=True)
+    user_password = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -154,10 +143,10 @@ class UserInfo(models.Model):
 class UserRating(models.Model):
     rating_id = models.AutoField()
     user = models.OneToOneField(UserInfo, models.DO_NOTHING, primary_key=True)
-    movie_id = models.IntegerField()
-    rating = models.DecimalField(max_digits=2, decimal_places=1)
+    tmdb_id = models.IntegerField()
+    rating = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'user_rating'
-        unique_together = (('user', 'movie_id'),)
+        unique_together = (('user', 'tmdb_id'),)

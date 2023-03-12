@@ -56,56 +56,22 @@ python manage.py runserver
 - Create necessary tables
 
 ```postgresql
-CREATE TABLE ratings (
+CREATE TABLE temp_storage (
             user_id INTEGER NOT NULL,
             movie_id INTEGER NOT NULL,
             rating NUMERIC(2,1) NOT NULL,
             timestamp BIGINT NOT NULL
         );
 
-CREATE TABLE user_rating (
-   	rating_id SERIAL,
-        	user_id INTEGER REFERENCES user_info (user_id),
-        	movie_id INTEGER, # CHANGE THIS TO FOREIGN KEY
-        	rating NUMERIC(2,1),
-        	PRIMARY KEY (user_id, movie_id)
-    	);
-
-CREATE TABLE user_info (
-            user_id INTEGER PRIMARY KEY
-        );
-
-CREATE TABLE movie_info (
+CREATE TABLE temp_storage2 (
             movie_id INTEGER PRIMARY KEY,
             imdb_id INTEGER,
             tmdb_id INTEGER
         );
 
-CREATE TABLE movie_metadata (
-	adult BOOLEAN,
-	belongs_to_collection JSON,
-	budget INTEGER,
-	genres jsonb,
-	homepage varchar(255),
-	tmdb_id INTEGER,
-	imdb_id varchar(10),
-	original_language varchar(10),
-	original_title varchar(255),
-	overview text,
-	popularity NUMERIC(3,2),
-	poster_path text,
-	production_companies jsonb, 
-	production_countries jsonb,
-	release_date DATE,
-	revenue BIGINT,
-	runtime INT,
-	spoken_languages jsonb,
-	status varchar(10),
-	tagline varchar(255),
-	title varchar(255),
-	video BOOLEAN,
-	vote_average NUMERIC(2,1),
-	vote_count INTEGER
+CREATE TABLE movie_info (
+		tmdb_id INTEGER PRIMARY KEY,
+		title varchar(255)
 );
 ```
 
@@ -113,23 +79,65 @@ CREATE TABLE movie_metadata (
 
 - Load CSVs to ratings and movie_info table using psql
 ```cmd
-\copy ratings(user_id, movie_id, rating, timestamp) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
-\copy movie_info(movie_id, imdb_id, tmdb_id) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
-\copy movie_metadata(adult,belongs_to_collection,budget,genres,homepage,tmdb_id,imdb_id,original_language,original_title,overview,popularity,poster_path,production_companies,production_countries,release_date,revenue,runtime,spoken_languages,status,tagline,title,video,vote_average,vote_count) FROM 'C:\Users\rjome\simple_django_project\data\movies_metadata.csv' WITH (FORMAT CSV, HEADER, QUOTE '"');
+\copy temp_storage(user_id, movie_id, rating, timestamp) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
+\copy temp_storage2(movie_id, imdb_id, tmdb_id) FROM <path_to_csv> WITH (FORMAT CSV, HEADER);
+\copy movie_info(tmdb_id, title) FROM /home/rjomega/github_new/E2E_PROJECTS/recommender_system/ML/data/movies_metadata_mini.csv WITH (FORMAT CSV, HEADER);
 ```
 **NOTE**: This is done so we can load easily the data to our tables. We can drop this later on to save space on AWS RDS.
 
 <br>
+- Check if there are any null
+
+```postgresql
+-- COMBINE TWO TABLES TO GET tmdb_id for movie_id (CHECK IF THERE ARE ANY NULL)
+SELECT temp1.user_id, temp1.movie_id, temp2.tmdb_id, temp1.rating
+FROM temp_storage temp1
+LEFT JOIN temp_storage2 temp2
+ON temp1.movie_id = temp2.movie_id
+WHERE temp2.tmdb_id IS NULL;
+
+-- COUNT NULL tmdb_id (NULL COUNT = 13503)
+SELECT COUNT(*) AS null_tmdb_count
+FROM temp_storage temp1
+LEFT JOIN temp_storage2 temp2
+ON temp1.movie_id = temp2.movie_id
+WHERE temp2.tmdb_id IS NULL;
+```
+<br>
 
 - Load data to our two tables named user_rating and user_info from ratings table
-```sql
-INSERT INTO user_info (user_id)
-SELECT DISTINCT user_id
-FROM ratings;
 
-INSERT INTO user_rating (user_id,movie_id,rating)
-SELECT user_id,movie_id,rating
-FROM ratings;
+```postgresql
+-- CREATE USER_INFO TABLE
+CREATE TABLE user_info (
+            user_id INTEGER PRIMARY KEY,
+			user_password varchar(20)
+        );
+
+-- INSERT TO USER_INFO TABLE user_id with tmdb
+INSERT INTO user_info (user_id)
+SELECT DISTINCT temp1.user_id
+FROM temp_storage temp1
+LEFT JOIN temp_storage2 temp2
+ON temp1.movie_id = temp2.movie_id
+WHERE temp2.tmdb_id IS NOT NULL;
+
+-- CREATE USER_RATING TABLE
+CREATE TABLE user_rating (
+   	rating_id SERIAL,
+        	user_id INTEGER REFERENCES user_info (user_id),
+        	tmdb_id INTEGER,
+        	rating NUMERIC(2,1),
+        	PRIMARY KEY (user_id, tmdb_id)
+    	);
+
+-- ADD DATA WITHOUT tmdb_id == NULL
+INSERT INTO user_rating (user_id,tmdb_id,rating)
+SELECT DISTINCT ON (temp1.user_id, temp2.tmdb_id) temp1.user_id, temp2.tmdb_id, temp1.rating
+FROM temp_storage temp1
+LEFT JOIN temp_storage2 temp2
+ON temp1.movie_id = temp2.movie_id
+WHERE temp2.tmdb_id IS NOT NULL;
 ```
 
 <br>
@@ -166,7 +174,7 @@ DATABASES = {
 
 - generate model.py
 ```cmd
-python manage.py inspectdb > (path to models directory)\models.py
+python manage.py inspectdb > <path to models directory>\models.py
 ```
 **NOTE**: Make some changes in models.py
 
