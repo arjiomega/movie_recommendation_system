@@ -92,9 +92,25 @@ def userrating_list(request):
 
     context['current_user'] = user_id
 
-    context['rating'] = [{'title':title,'rating':rating} for i,(title,rating) in enumerate(zip(movie_name_obj,[float(x.rating) for x in rating]))]
+    context['poster_path'] = []
+    poster_list = []
+    for movie in rating:
+        print("tmdb_id: ",movie.tmdb_id)
+        url = f'{base_url}/movie/{movie.tmdb_id}?api_key={tmdb_api_key}&language=en-US'
+        response = requests.get(url)
+        output_ = json.loads(response.text)
+        poster_dict =   {
+                        "tmdb_id":movie.tmdb_id,
+                        "poster_path":output_['poster_path']
+                        }
+        poster_list.append(output_['poster_path'])
 
-    paginator = Paginator(context['rating'],per_page=10)
+    #print(context['poster_path'])
+
+
+    context['rating'] = [{'title':title,'rating':rating, 'poster_path':poster_path} for i,(title,rating,poster_path) in enumerate(zip(movie_name_obj,[float(x.rating) for x in rating],poster_list))]
+
+    paginator = Paginator(context['rating'],per_page=5)
     page_number = request.GET.get('page',1)
 
     context['page_obj'] = paginator.page(page_number)
@@ -278,6 +294,7 @@ def update_MyUser(request):
 
 
         print("------------------END POST-------------------------")
+        return HttpResponseRedirect("")
 
     url = f'{base_url}discover/movie?api_key={tmdb_api_key}&language=en-US&sort_by=popularity.desc&primary_release_year={year}&with_genres={load_genres}&page=1?'
 
@@ -291,12 +308,84 @@ def update_MyUser(request):
 
 def edit_user(request):
     context = {}
+
+    if 'user_id' in request.session:
+        context['user_id'] = request.session.get('user_id')
+        context['movies_watched'] = request.session['movies_watched']
+        context['session'] = True
+        print('session available')
+    else:
+        context['session'] = False
+        print('session not available')
+
+    rating = UserRating.objects.filter(user_id=context['user_id'])
+    movie_name_obj = [y.title for x in rating for y in MovieInfo.objects.filter(tmdb_id=x.tmdb_id)]
+
+    context = {}
+
+    if 'user_id' in request.session:
+        context['user_id'] = request.session.get('user_id')
+        context['session'] = True
+        print('session available')
+    else:
+        context['session'] = False
+        print('session not available')
+
+    context['current_user'] = context['user_id']
+
+    context['poster_path'] = []
+    poster_list = []
+    for movie in rating:
+        print("tmdb_id: ",movie.tmdb_id)
+        url = f'{base_url}/movie/{movie.tmdb_id}?api_key={tmdb_api_key}&language=en-US'
+        response = requests.get(url)
+        output_ = json.loads(response.text)
+        poster_dict =   {
+                        "tmdb_id":movie.tmdb_id,
+                        "poster_path":output_['poster_path']
+                        }
+        poster_list.append(output_['poster_path'])
+
+
+    #print(context['poster_path'])
+
+
+    context['rating'] = [{'title':title,'rating':rating, 'poster_path':poster_path,'tmdb_id':tmdb} for i,(title,rating,poster_path,tmdb) in enumerate(zip(movie_name_obj,[x.rating for x in rating],poster_list,[x.tmdb_id for x in rating]))]
+
+    paginator = Paginator(context['rating'],per_page=5)
+    page_number = request.GET.get('page',1)
+
+    context['page_obj'] = paginator.page(page_number)
+
+    print("page_obj",context['page_obj'])
+    #####################
+
+    if request.method == 'POST':
+
+        if request.POST['form_name'] == 'formUpdateMovie':
+            tmdb_id = request.POST.get('tmdb_id')
+            rating = request.POST.get('rating')
+
+            update_rating = get_object_or_404(UserRating,user_id = context['user_id'], tmdb_id = tmdb_id)
+            update_rating.rating=rating
+            update_rating.save()
+            return HttpResponseRedirect("")
+
+        if request.POST['form_name'] == 'formDeleteMovie':
+            tmdb_id = request.POST.get('tmdb_id')
+            delete_movie = get_object_or_404(UserRating,user_id = context['user_id'], tmdb_id = tmdb_id)
+            delete_movie.delete()
+            return HttpResponseRedirect("")
+
+
+
     return render(request,'edit_user.html',context)
 
-def testing(request):
-    context = {}
-    context['current_page'] = request.GET.get('page',1)
-    return render(request,'testing.html',context)
+def update_test(request):
+    logout(request)
+    return redirect('edit_user')
+
+
 
 
 # # update view for details
@@ -330,7 +419,6 @@ def testing(request):
  
 #     # fetch the object related to passed id
 #     obj = get_object_or_404(simpleModel, id = id)
- 
  
 #     if request.method =="POST":
 #         # delete object

@@ -38,7 +38,7 @@
     {% if rating %}
       <h2>Data for user id: {{ current_user }}</h2> 
 
-      <table class="table table-borderless">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th class='table-success'>Movie Title</th>
@@ -49,7 +49,10 @@
 
           {% for userrating in page_obj %}
             <tr>
-              <td>{{ userrating.title }}</td>
+              <td>
+                <h5>{{ userrating.title }}</h5>
+                <img class="img-fluid" src="https://image.tmdb.org/t/p/w185{{ userrating.poster_path }}" alt="Image 1"/>
+              </td>
               <td>{{ userrating.rating }}</td>
             </tr>
           {% endfor %}
