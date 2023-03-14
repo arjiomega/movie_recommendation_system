@@ -16,6 +16,9 @@
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/update/' %}active{% endif %}" href="{% url 'update' %}">Add Movie</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/edit_user/' %}active{% endif %}" href="{% url 'edit_user' %}">Edit User</a>
+          </li>
         </ul>
         {% if user_id %}
           <span class="nav-text me-3">Currently logged User ID: {{ user_id }}</span>

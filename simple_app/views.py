@@ -13,6 +13,8 @@ import json
 tmdb_api_key = '3ff7e7fd6d5dfaa54dc83a776a962a50'
 base_url = 'https://api.themoviedb.org/3/'
 
+rs_url = 'https://lbt4gz4zua2qrypzd6aythaiju0rlmfb.lambda-url.us-east-2.on.aws/predict/'
+
 def home_view(request):
 
     # popular movies request (Get 10 image links)
@@ -26,11 +28,34 @@ def home_view(request):
 
     if 'user_id' in request.session:
         context['user_id'] = request.session.get('user_id')
+        context['movies_watched'] = request.session.get('movies_watched')
+
+        #####
+        payload = {
+                "user_id": context['user_id'],
+                "movie_list": context['movies_watched']
+        }
+        response = requests.post(url=rs_url, json=payload)
+        output_ = json.loads(response.text)
+
+        recommend_id_list = [movie['id'] for movie in output_['data']['predict']]
+        
+        context['recommend_poster'] = []
+        for tmdb_id in recommend_id_list:
+            url = f'{base_url}/movie/{tmdb_id}?api_key={tmdb_api_key}&language=en-US'
+            response = requests.get(url)
+            output_ = json.loads(response.text)
+            context['recommend_poster'].append(output_['poster_path'])
+        print(context['recommend_poster'])
+        #####
+
         context['session'] = True
         print('session available')
     else:
         context['session'] = False
         print('session not available')
+
+
 
     for i in range(12):
         pop_list.append(popular_data['results'][i]['poster_path'])
@@ -208,14 +233,23 @@ def update_MyUser(request):
 
         if 'user_id' in request.session:
             user_id = request.session.get('user_id')
-            context['user_logged'] = int(user_id)
-            context['movie_names'] = request.session['movie_names']
 
             ###### GET MOVIE ID ############
             # GET LIST OF MOVIES USER WATCHED
             user_rating = UserRating.objects.filter(user_id=int(user_id))
             context['movies_watched'] = [rating.tmdb_id for rating in user_rating]
             request.session['movies_watched'] = context['movies_watched']
+
+            movie_names = []
+            for movie in context['movies_watched']:
+                # get movie title from tmdb_id
+                url = f"{base_url}/movie/{movie}?api_key={tmdb_api_key}&language=en-US"
+                response = requests.get(url)
+                movie_detail = json.loads(response.text)
+                movie_names.append(movie_detail['original_title'])
+            context["movie_names"] = movie_names
+            request.session['movie_names'] = movie_names
+            print(context["movie_names"])
 
             ################################
 
@@ -236,7 +270,8 @@ def update_MyUser(request):
             user_password = request.POST.get('user_password')
 
         ## REPLACE THIS TO PROPER NAMING
-        select_movie = request.POST.get('select_movie')
+        select_movie = request.POST.getlist('select_movie')
+        print("select movie ",select_movie)
 
         # CHECK IF USER ID IS ENTERED
         if not user_id:
@@ -261,37 +296,36 @@ def update_MyUser(request):
             elif not UserInfo.objects.filter(user_id=int(user_id)).first().user_password == user_password:
                 context['error'] = f'Wrong password for user id {user_id}'
 
-            user_rating = UserRating.objects.filter(user_id=int(user_id))
-            context['movies_watched'] = [rating.tmdb_id for rating in user_rating]
-            request.session['movies_watched'] = context['movies_watched']
-
-            movie_names = []
-            for movie in context['movies_watched']:
-                # get movie title from tmdb_id
-                url = f"{base_url}/movie/{movie}?api_key={tmdb_api_key}&language=en-US"
-                response = requests.get(url)
-                movie_detail = json.loads(response.text)
-                movie_names.append(movie_detail['original_title'])
-            context["movie_names"] = movie_names
-            request.session['movie_names'] = movie_names
-
             if select_movie:
-                #CHECK IF MOVIE_ID ALREADY EXISTS FOR THE USER_ID
-                if not UserRating.objects.filter(user_id=int(user_id),tmdb_id=int(select_movie)).exists():
-                    ############# ADD TO USER #####################
-                    print(f"user_id {type(user_id)} {user_id}")
-                    print("LOAD TO USER: ",user_id,int(select_movie))
-                    add_movie = UserRating(user_id = int(user_id),tmdb_id=int(select_movie))
-                    print(f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.tmdb_id}")
-                    add_movie.save()
-                    context['success'] = f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.tmdb_id}"
-                    ###############################################
-                else:
-                    #context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
-                    print(f'Movie ID {select_movie} for User ID {user_id} already exists')
+                for tmdb_id in select_movie:
+                    #CHECK IF MOVIE_ID ALREADY EXISTS FOR THE USER_ID
+                    if not UserRating.objects.filter(user_id=int(user_id),tmdb_id=int(tmdb_id)).exists():
+                        ############# ADD TO USER #####################
+                        print(f"user_id {type(user_id)} {user_id}")
+                        print("LOAD TO USER: ",user_id,int(tmdb_id))
+                        add_movie = UserRating(user_id = int(user_id),tmdb_id=int(tmdb_id))
+                        print(f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.tmdb_id}")
+                        add_movie.save()
+                        context['success'] = f"ADD TO USERRATING MODEL> USER ID: {add_movie.user_id} MOVIE_ID: {add_movie.tmdb_id}"
+                        ###############################################
+                    else:
+                        #context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
+                        print(f'Movie ID {tmdb_id} for User ID {user_id} already exists')
 
 
+        user_rating = UserRating.objects.filter(user_id=int(user_id))
+        context['movies_watched'] = [rating.tmdb_id for rating in user_rating]
+        request.session['movies_watched'] = context['movies_watched']
 
+        movie_names = []
+        for movie in context['movies_watched']:
+            # get movie title from tmdb_id
+            url = f"{base_url}/movie/{movie}?api_key={tmdb_api_key}&language=en-US"
+            response = requests.get(url)
+            movie_detail = json.loads(response.text)
+            movie_names.append(movie_detail['original_title'])
+        context["movie_names"] = movie_names
+        request.session['movie_names'] = movie_names
 
         print("------------------END POST-------------------------")
         return HttpResponseRedirect("")
@@ -319,8 +353,20 @@ def edit_user(request):
         print('session not available')
 
     rating = UserRating.objects.filter(user_id=context['user_id'])
-    movie_name_obj = [y.title for x in rating for y in MovieInfo.objects.filter(tmdb_id=x.tmdb_id)]
 
+    # add to database if tmdb_id and movie_id not exist
+    for movie in rating:
+        if not MovieInfo.objects.filter(tmdb_id=movie.tmdb_id).exists():
+            url = f'{base_url}/movie/{movie.tmdb_id}?api_key={tmdb_api_key}&language=en-US'
+            response = requests.get(url)
+            movies = json.loads(response.text)
+
+            add_movie = MovieInfo(tmdb_id = movie.tmdb_id,title=movies['title'])
+            add_movie.save()
+
+    movie_name_obj = [y.title for x in rating for y in MovieInfo.objects.filter(tmdb_id=x.tmdb_id)]
+    test = [(x.tmdb_id) for x in rating]
+    print(movie_name_obj)
     context = {}
 
     if 'user_id' in request.session:
@@ -349,6 +395,8 @@ def edit_user(request):
 
     #print(context['poster_path'])
 
+    print('before insert:')
+    print(len(movie_name_obj),len([x.rating for x in rating]),len(poster_list),len([x.tmdb_id for x in rating]))
 
     context['rating'] = [{'title':title,'rating':rating, 'poster_path':poster_path,'tmdb_id':tmdb} for i,(title,rating,poster_path,tmdb) in enumerate(zip(movie_name_obj,[x.rating for x in rating],poster_list,[x.tmdb_id for x in rating]))]
 
@@ -369,13 +417,17 @@ def edit_user(request):
             update_rating = get_object_or_404(UserRating,user_id = context['user_id'], tmdb_id = tmdb_id)
             update_rating.rating=rating
             update_rating.save()
-            return HttpResponseRedirect("")
+            context['current_url'] = request.path
+            print(context['current_url'])
+            return HttpResponseRedirect('')
 
         if request.POST['form_name'] == 'formDeleteMovie':
             tmdb_id = request.POST.get('tmdb_id')
             delete_movie = get_object_or_404(UserRating,user_id = context['user_id'], tmdb_id = tmdb_id)
             delete_movie.delete()
-            return HttpResponseRedirect("")
+            context['current_url'] = request.path
+            print(context['current_url'])
+            return HttpResponseRedirect('')
 
 
 

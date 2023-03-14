@@ -21,10 +21,10 @@
       label:hover {
         filter: grayscale(0);
       }
-      input[type="radio"] {
+      input[type="checkbox"] {
         display: none; /* hide the radio button */
       }
-      input[type="radio"]:checked + label {
+      input[type="checkbox"]:checked + label {
         filter: grayscale(0);
       }
   </style>
@@ -110,7 +110,7 @@
                 {% endif %}
             </div>
 
-            {% if user_logged %}
+            {% if session %}
                 <div class='mt-3 mb-3'>
                     <h3 class="badge text-wrap bg-success fw-bold text-light">USER ID: {{user_logged}}</h3>
                     <h3 class="badge text-wrap bg-primary fw-bold text-light">Movies: {{movie_names}}</h3>
@@ -128,7 +128,7 @@
                         {% for movie in movies %}
                             {% if movie.id not in movies_watched%}
                                 <div class="col mb-4">
-                                    <input type="radio" name="select_movie" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <input type="checkbox" name="select_movie" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <label for="male{{ forloop.counter }}">
                                         <img src="https://image.tmdb.org/t/p/w185{{movie.poster_path}}" alt="{{movie.original_title}}">
                                     </label>
@@ -159,7 +159,7 @@
                 minViewMode: "years"
             });
         </script>
-        <script>
+        <!-- <script>
             // Add event listener to all radio inputs with img labels
             const radioInputs = document.querySelectorAll('input[type="radio"] + label');
             radioInputs.forEach(function(label) {
@@ -175,12 +175,12 @@
                 }
                 });
             });
-        </script>
+        </script> -->
 
         {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
-                $('#my-form input[type="radio"]').on('change', function() {
+                $('#my-form input[type="checkbox"]').on('change', function() {
                   var $col = $(this).closest('.col');
                   var movieId = $col.find('input[name="select_movie"]').val();
                   var select_movie = $('input[name="select_movie"]:checked').val();

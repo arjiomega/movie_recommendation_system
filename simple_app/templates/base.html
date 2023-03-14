@@ -53,6 +53,47 @@
       </button>
     </div>
 
+      {% if session %}
+      <div class="container mt-5">
+        <h1>Recommended Movies</h1>
+        <div id="gallery" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+              <div class="carousel-item active">
+                  <div class="row">
+  
+                    {% for movie in recommend_poster|slice:":5" %}
+                    <div class="col">
+                        <img class="img-fluid" src="https://image.tmdb.org/t/p/w185{{movie}}" alt="Image 1"/>
+                    </div>
+                    {% endfor %}
+                    
+                  </div>
+              </div>
+      
+              <div class="carousel-item">
+                  <div class="row">
+                    {% for movie in recommend_poster|slice:"5:" %}
+                    <div class="col">
+                        <img class="img-fluid" src="https://image.tmdb.org/t/p/w185{{movie}}" alt="Image 1}"/>
+                    </div>
+                    {% endfor %}
+                  </div>
+              </div>
+          </div>
+      
+          <a class="carousel-control-prev" href="#gallery" role="button" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+          </a>
+      
+          <a class="carousel-control-next" href="#gallery" role="button" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+
     <div class="container mt-5">
       <h1>Popular Movies</h1>
       <div id="gallery" class="carousel slide" data-bs-ride="carousel">
