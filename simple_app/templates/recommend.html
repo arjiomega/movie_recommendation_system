@@ -22,37 +22,21 @@
       label:hover {
         filter: grayscale(0);
       }
-      input[type="radio"] {
+      input[type="checkbox"] {
         display: none; /* hide the radio button */
       }
+
+      input[type="checkbox"]:checked + label {
+        filter: grayscale(0);
+      }
+
   </style>
 </head>
     <body>
         <!--HEADER-->
-        <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home_view' %}">Movie Recommender System</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'userrating_list' %}">GET</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="{% url 'enter' %}">Register</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">Recommend</a>
-                    </li>
-                </ul>
-                <span class="navbar-text">
-
-                </span>
-                </div>
-            </div>
-        </nav>
+        {% block header %}
+            {% include 'common/header.html' %}
+        {% endblock %}
         <!--END HEADER-->
 
         <!-- MODAL -->
@@ -74,20 +58,25 @@
                 </div>
             </div>
         </div> {% endcomment %}
-        
+
         <!-- END MODAL -->
-  
+
 
         <!--LOGIN-->
         <div class="container mt-3">
             <div class="mt-4 p-5 bg-primary text-white rounded">
-                <h1>Enter user id to add movies to your list</h1> 
+                <h1>Enter user id to add movies to your list</h1>
                 <form method="POST" action="{% url 'update' %}" class="was-validated">
                     {% csrf_token %}
                     <div class="mb-3 mt-3">
                         <label for="user_id" class="form-label">User id:</label>
-                
-                        <input type="text" id="user_id" name="user_id" class="form-control" placeholder="Enter user id" required>
+                        <input type="number" id="user_id" name="user_id" class="form-control" placeholder="Enter user id" required>
+                        <div class="valid-feedback"></div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label for="user_id" class="form-label">User password:</label>
+                        <input type="password" id="user_password" name="user_password" class="form-control" placeholder="Enter user password" required>
                         <div class="valid-feedback"></div>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -107,10 +96,9 @@
                     <h1>{{success}}</h1>
                 {% endif %}
             </div>
-            
-            
+
         </div>
-        
+
         <!--END LOGIN-->
 
         <div class="container mt-5">
@@ -128,6 +116,21 @@
                 <button type="submit" class="btn btn-light mt-3">Display</button>
             </form>
 
+            <div>
+                {% if success %}
+                    <h3 class="badge mt-5 text-wrap bg-success fw-bold text-light">{{success}}</h3>  
+                {% else %}
+                    <h3 class="badge mt-5 text-wrap bg-danger fw-bold text-light">{{error}}</h3>
+                {% endif %}
+            </div>
+
+            {% if session %}
+                <div class='mt-3 mb-3'>
+                    <h3 class="badge text-wrap bg-success fw-bold text-light">USER ID: {{user_logged}}</h3>
+                    <h3 class="badge text-wrap bg-primary fw-bold text-light">Movies: {{movie_names}}</h3>
+                </div>
+            {% endif %}
+
             <!--DISPLAY CHOICES-->
             <div class="mt-5">
                 <h3>Genres</h3>
@@ -137,9 +140,10 @@
                     {% csrf_token %}
                     <div class="row row-cols-4 row-cols-lg-4">
                         {% for movie in movies %}
-                   
+
+                            {% if movie.id not in movies_watched%}
                                 <div class="col mb-4">
-                                    <input type="radio" name="gender" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <input type="checkbox" name="select_movie" value="{{ movie.id }}" class="sr-only" id="male{{ forloop.counter }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <label for="male{{ forloop.counter }}">
                                         <img src="https://image.tmdb.org/t/p/w185{{movie.poster_path}}" alt="{{movie.original_title}}">
                                     </label>
@@ -154,23 +158,10 @@
 
         </div>
 
-        <div class="container mt-5">
-            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-                <div class="col-md-4 d-flex align-items-center">
-                <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
-                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-                </a>
-                <span class="mb-3 mb-md-0 text-muted">© 2023 Richard Omega</span>
-                </div>
-            
-                <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
-                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
-                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
-                </ul>
-            </footer>
-        </div>
-    
+        {% block footer %}
+            {% include 'common/footer.html' %}
+        {% endblock %}
+
         <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
         <script>
             new MultiSelectTag('genres')  // id
@@ -186,7 +177,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
-                $('#my-form input[type="radio"]').on('change', function() {
+                $('#my-form input[type="checkbox"]').on('change', function() {
                   var $col = $(this).closest('.col');
                   var movieId = $col.find('input[name="gender"]').val();
                   var select_movie = $('input[name="gender"]:checked').val();
