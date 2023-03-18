@@ -1,8 +1,12 @@
 
+<<<<<<< HEAD
+# Simple Django CRUD Project
+=======
 # DJANGO RECOMMENDER SYSTEMS PROJECT
 
 THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT OPPORTUNITY TO APPLY RECOMMENDER SYSTEMS TO DJANGO WITH CRUD THAT IS ALSO CONNECTED TO AWS.
 <br>
+>>>>>>> 0543f82b0c4efb93e920866594fb45a2d8a1374c
 
 <br>
 
@@ -185,6 +189,12 @@ python manage.py inspectdb > <path to models directory>\models.py
 python manage.py migrate
 ```
 
+<<<<<<< HEAD
+## Create form for adding and editing a person
+```cmd
+python manage.py migrate
+```
+=======
 <br>
 
 
@@ -192,3 +202,4 @@ python manage.py migrate
 
 
 
+>>>>>>> 0543f82b0c4efb93e920866594fb45a2d8a1374c
