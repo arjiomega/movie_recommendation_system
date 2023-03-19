@@ -8,12 +8,11 @@ from .models import UserRating,MovieInfo,UserInfo
 #from .forms import userForm,myUserForm
 import requests
 import json
+import os
 
-
-tmdb_api_key = '3ff7e7fd6d5dfaa54dc83a776a962a50'
+tmdb_api_key = os.environ.get('TMDB_API_KEY')
 base_url = 'https://api.themoviedb.org/3/'
-
-rs_url = 'https://lbt4gz4zua2qrypzd6aythaiju0rlmfb.lambda-url.us-east-2.on.aws/predict/'
+rs_url = os.environ.get('RS_URL')
 
 def home_view(request):
 
@@ -38,8 +37,8 @@ def home_view(request):
         response = requests.post(url=rs_url, json=payload)
         output_ = json.loads(response.text)
 
-        recommend_id_list = [movie['id'] for movie in output_['data']['predict']]
-        
+        recommend_id_list = [movie['id'] for movie in output_['data']['predict']['recommended_movies']]
+
         context['recommend_poster'] = []
         for tmdb_id in recommend_id_list:
             url = f'{base_url}/movie/{tmdb_id}?api_key={tmdb_api_key}&language=en-US'
@@ -328,7 +327,7 @@ def update_MyUser(request):
         request.session['movie_names'] = movie_names
 
         print("------------------END POST-------------------------")
-        return HttpResponseRedirect("")
+        #return HttpResponseRedirect("")
 
     url = f'{base_url}discover/movie?api_key={tmdb_api_key}&language=en-US&sort_by=popularity.desc&primary_release_year={year}&with_genres={load_genres}&page=1?'
 
