@@ -95,7 +95,6 @@ def home_view(request):
         print(context['user_id'])
     ########################################################
 
-
     return render(request, 'base.html',context)
 
 def userrating_list(request):
@@ -254,9 +253,12 @@ def update_MyUser(request):
 
         print("\n---------------------END GET------------------------\n")
 
+    
 
     if request.method == 'POST':
         print("------------------POST-------------------------")
+        # LOGIN
+        
 
         # Check if the user is already logged in
 
@@ -284,7 +286,7 @@ def update_MyUser(request):
         # CHECK IF USER_ID DOES NOT EXIST IN USER_INFO
         elif not UserInfo.objects.filter(user_id=int(user_id)).exists():
             context['error'] = f'User ID {user_id} does not exists'
-        
+
         elif user_id:
             request.session['user_id'] = user_id
             request.session['user_password'] = user_password
@@ -311,7 +313,6 @@ def update_MyUser(request):
                         #context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
                         print(f'Movie ID {tmdb_id} for User ID {user_id} already exists')
 
-
         user_rating = UserRating.objects.filter(user_id=int(user_id))
         context['movies_watched'] = [rating.tmdb_id for rating in user_rating]
         request.session['movies_watched'] = context['movies_watched']
@@ -336,6 +337,17 @@ def update_MyUser(request):
 
 
     context['movies'] = movies['results']
+
+    # PRINT
+    print("\n---------------------FINAL------------------------\n")
+    print("USER LOGGED: ",request.session['user_id'])
+    print("CHOSEN YEAR: ",context['year'])
+    print("CHOSEN GENRES: ",context['genres_text'])
+    print("CURRENT URL: ",url)
+    print("ADDED MOVIES: ",context['temp_list'])
+    #print("ADD TO USER_RATING: ",add_movie)
+    print("\n--------------------END FINAL----------------------\n")
+    ###################################################
 
     return render(request,"recommend.html",context)
 
