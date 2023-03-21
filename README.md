@@ -1,7 +1,3 @@
-
-
-# Simple Django CRUD Project
-
 # DJANGO RECOMMENDER SYSTEMS PROJECT
 
 ![project image](https://i.imgur.com/YSp0ZFm.png)
