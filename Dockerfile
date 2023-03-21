@@ -23,7 +23,6 @@ ENV RS_URL $RS_URL
 
 COPY ./simple_app ./simple_app
 COPY ./simple_django ./simple_django
-COPY ./static ./static
 COPY requirements.txt .
 COPY manage.py .
 
@@ -31,4 +30,4 @@ RUN pip install --upgrade pip --no-cache-dir
 
 RUN pip install -r /app/requirements.txt --no-cache-dir
 
-CMD ["gunicorn","simple_django.wsgi:application","--bind","0.0.0.0:8000"]
+CMD ["gunicorn","simple_django.wsgi:application","--bind","0.0.0.0:8000","-w","3","--timeout","600"]

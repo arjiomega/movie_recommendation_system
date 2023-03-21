@@ -11,21 +11,31 @@
             <a class="nav-link {% if request.path == '/userratings/' %}active{% endif %}" aria-current="page" href="{% url 'userrating_list' %}">Get User Ratings</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/enter/' %}active{% endif %}" href="{% url 'enter' %}">Add User</a>
+            <a class="nav-link {% if request.path == '/register/' %}active{% endif %}" href="{% url 'register' %}">Add User</a>
           </li>
           <li class="nav-item">
+            {% if session %}
             <a class="nav-link {% if request.path == '/update/' %}active{% endif %}" href="{% url 'update' %}">Add Movie</a>
+            {% endif %}
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/edit_user/' %}active{% endif %}" href="{% url 'edit_user' %}">Edit User</a>
           </li>
         </ul>
-        {% if user_id %}
-          <span class="nav-text me-3">Currently logged User ID: {{ user_id }}</span>
+        {% if not session %}
+        <form action="{% url 'login' %}">
+          <button type="submit" class="btn btn-primary">LOGIN</button>
+        </form>
+        {% endif %}
+        {% if session %}
+        <form action="{% url 'edit_user' %}">
+          <button type="submit" class="btn btn-primary">EDIT USER</button>
+        </form>
         {% endif %}
         <span class="navbar-text">
           {% if session %}
-            <a class="nav-link" href="{% url 'logout' %}">logout</a>
+          <form action="{% url 'logout' %}">
+            <button type="submit" class="btn btn-danger ms-2">LOGOUT</button>
+          </form>
           {% endif %}
         </span>
       </div>

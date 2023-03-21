@@ -25,9 +25,10 @@ urlpatterns = [
     #path('',create_view,name='create'),
     # path('list/',list_view,name='list' ),
     #path('display_rating/',display_rating,name='display_rating'),
-    path('enter/',add_MyUser,name='enter'),
+    path('register/',register,name='register'),
     path('update/',update_MyUser,name='update'),
 
+    path('login/',loginPage,name='login'),
     path('logout/',logoutPage,name='logout'),
     path('edit_user/',edit_user,name='edit_user')
 

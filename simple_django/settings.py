@@ -40,6 +40,13 @@ INSTALLED_APPS = [
     'simple_app',
 ]
 
+CACHES = {
+    'default':{
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'dataflair_cache',
+    }
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
