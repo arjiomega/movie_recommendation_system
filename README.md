@@ -1,12 +1,15 @@
 
-<<<<<<< HEAD
+
 # Simple Django CRUD Project
-=======
+
 # DJANGO RECOMMENDER SYSTEMS PROJECT
 
-THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT OPPORTUNITY TO APPLY RECOMMENDER SYSTEMS TO DJANGO WITH CRUD THAT IS ALSO CONNECTED TO AWS.
-<br>
->>>>>>> 0543f82b0c4efb93e920866594fb45a2d8a1374c
+![project image](https://imgur.com/a/oVKLwMI)
+
+This project's purpose is to showcase recommendation system using machine learning by making an interactive website.
+- **Database used**: AWS RDS Postgresql
+- **Recommender system**: Content-based filter (collab filter will not work well because the data used only have user ratings up to year 2020 and this project shows updated movies)
+
 
 <br>
 
@@ -17,7 +20,6 @@ THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT O
 	3. [Create Django App](#django_app)
 	4. [Run Django Server](#django_server)
 2. [AWS Database Setup](#aws_db)
-3. [React JS Setup](#react_setup)
 
 <br>
 
@@ -27,7 +29,6 @@ THIS PROJECT IS SUPPOSED TO BE A SIMPLE DJANGO PROJECT BUT IT WOULD BE A GREAT O
 conda create --no-default-packages -n <env_name>
 conda activate <env_name>
 conda install python=3.9
-conda install nodejs=16.13.1
 ```
 
 ### Create Django Project <a name="django_proj"></a>
@@ -189,17 +190,3 @@ python manage.py inspectdb > <path to models directory>\models.py
 python manage.py migrate
 ```
 
-<<<<<<< HEAD
-## Create form for adding and editing a person
-```cmd
-python manage.py migrate
-```
-=======
-<br>
-
-
-
-
-
-
->>>>>>> 0543f82b0c4efb93e920866594fb45a2d8a1374c
