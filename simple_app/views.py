@@ -49,8 +49,6 @@ def loadUserData(user_id,get=['user_data']):
 
     return user_data
 
-rs_url = 'https://lbt4gz4zua2qrypzd6aythaiju0rlmfb.lambda-url.us-east-2.on.aws/predict/'
-
 def home_view(request):
     context = {}
     home_cache = cache.get('home')
@@ -169,8 +167,6 @@ def userrating_list(request):
     page_number = request.GET.get('page',1)
 
     context['page_obj'] = paginator.page(page_number)
-
-    print("page_obj",context['page_obj'])
 
     return render(request, 'userrating_list.html', context)
 
