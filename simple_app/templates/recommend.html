@@ -39,68 +39,6 @@
         {% endblock %}
         <!--END HEADER-->
 
-        <!-- MODAL -->
-        
-        {% comment %} <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-                </div>
-            </div>
-        </div> {% endcomment %}
-
-        <!-- END MODAL -->
-
-
-        <!--LOGIN-->
-        <div class="container mt-3">
-            <div class="mt-4 p-5 bg-primary text-white rounded">
-                <h1>Enter user id to add movies to your list</h1>
-                <form method="POST" action="{% url 'update' %}" class="was-validated">
-                    {% csrf_token %}
-                    <div class="mb-3 mt-3">
-                        <label for="user_id" class="form-label">User id:</label>
-                        <input type="number" id="user_id" name="user_id" class="form-control" placeholder="Enter user id" required>
-                        <div class="valid-feedback"></div>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <div class="mb-3 mt-3">
-                        <label for="user_id" class="form-label">User password:</label>
-                        <input type="password" id="user_password" name="user_password" class="form-control" placeholder="Enter user password" required>
-                        <div class="valid-feedback"></div>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                    <button type="submit" class="btn btn-light">LOGIN</button>
-                </form>
-                {% if user_logged %}
-                    <div class=''>
-                        <h3 class="badge text-wrap mt-5 bg-light fw-bold text-dark">USER ID: {{user_logged}}</h3>
-                        <h3 class="badge text-wrap mt-5 bg-light fw-bold text-dark">Movies: {{movies_watched}}</h3>
-                    </div>
-                {% endif %}
-
-                {% if error %}
-                    <h1>{{error}}</h1>
-                {% endif %}
-                {% if success %}
-                    <h1>{{success}}</h1>
-                {% endif %}
-            </div>
-
-        </div>
-
-        <!--END LOGIN-->
-
         <div class="container mt-5">
             <form method="GET" action="{% url 'update' %}">
                 {% csrf_token %}
@@ -148,9 +86,10 @@
                                         <img src="https://image.tmdb.org/t/p/w185{{movie.poster_path}}" alt="{{movie.original_title}}">
                                     </label>
                                 </div>
-                          
+                            {% endif %}
                         {% endfor %}
                     </div>
+                    <button type="submit" class="btn btn-primary mt-3">Add to list</button>
                 </form>
             </div>
              <!--END DISPLAY CHOICES-->
