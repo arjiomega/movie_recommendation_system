@@ -9,7 +9,10 @@
 This project's purpose is to showcase recommendation system using machine learning by making an interactive website.
 - **Database used**: AWS RDS Postgresql
 - **Recommender system**: Content-based filter (collab filter will not work well because the data used only have user ratings up to year 2020 and this project shows updated movies)
+- **Currently deployed on**: aws ec2
 
+<br>
+Access to the url is available upon request to prevent my recommender system api currently deployed on aws lambda to get abused since I am trying to prevent getting past free tier limitations.
 
 <br>
 
