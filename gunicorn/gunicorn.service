@@ -1,0 +1,12 @@
+[Unit]
+Description=simple_django gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/django_project
+ExecStart=/home/ubuntu/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/ubuntu/django_project/simple_django/simple_django.sock simple_django.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

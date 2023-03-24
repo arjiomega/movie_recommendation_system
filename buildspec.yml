@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.0
 
 phases:
   pre_build:
@@ -7,7 +7,7 @@ phases:
       - pip3 install -r requirements.txt
   build:
     commands:
-      - echo ${test}
+      - echo test env var ${test}
       - echo Building the application
   post_build:
     commands:
