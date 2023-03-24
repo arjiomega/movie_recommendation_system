@@ -1,10 +1,6 @@
-
-
-# Simple Django CRUD Project
-
 # DJANGO RECOMMENDER SYSTEMS PROJECT
 
-![project image](https://imgur.com/a/oVKLwMI)
+![project image](https://i.imgur.com/YSp0ZFm.png)
 
 This project's purpose is to showcase recommendation system using machine learning by making an interactive website.
 - **Database used**: AWS RDS Postgresql
