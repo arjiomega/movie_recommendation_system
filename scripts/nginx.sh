@@ -10,6 +10,8 @@ sudo systemctl daemon-reload
 #conflicts with the custom configuration file for the Django application.
 sudo rm -f /etc/nginx/sites-enabled/default
 
+envsubst < nginx.conf.template > /home/ubuntu/django_project/nginx/nginx.conf
+
 sudo cp /home/ubuntu/django_project/nginx/nginx.conf /etc/nginx/sites-available/simple_django
 
 #This command creates a symbolic link between the sites-available/blog file
