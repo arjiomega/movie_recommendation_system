@@ -1,5 +1,5 @@
 [Unit]
-Description=simple_django gunicorn daemon
+Description=gunicorn daemon
 Requires=gunicorn.socket
 After=network.target
 [Service]

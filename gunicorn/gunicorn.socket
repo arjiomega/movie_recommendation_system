@@ -1,5 +1,5 @@
 [Unit]
-Description=simple django gunicorn socket
+Description=gunicorn socket
 [Socket]
 ListenStream=/run/gunicorn.sock
 [Install]
