@@ -18,6 +18,9 @@ phases:
       - pip3 install -r requirements.txt
       - echo Preparing variables...
       - rm -f /home/ubuntu/django_project/config.py
+      - if [ ! -d "/home/ubuntu/django_project/" ]; then
+            mkdir /home/ubuntu/django_project/
+        fi
       - echo SECRET_KEY=\""$SECRET_KEY"\" >> /home/ubuntu/django_project/config.py
       - echo PSQL_NAME=\""$PSQL_NAME"\" >> /home/ubuntu/django_project/config.py
       - echo PSQL_USER=\""$PSQL_USER"\" >> /home/ubuntu/django_project/config.py
