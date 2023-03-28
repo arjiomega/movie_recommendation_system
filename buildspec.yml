@@ -16,8 +16,17 @@ phases:
     commands:
       - echo Prebuild ops
       - pip3 install -r requirements.txt
-      - echo $SECRET_KEY
-      - echo $RS_URL
+      - echo Preparing variables...
+      - rm -f /home/ubuntu/django_project/config.py
+      - echo SECRET_KEY=\""$SECRET_KEY"\" >> /home/ubuntu/django_project/config.py
+      - echo PSQL_NAME=\""$PSQL_NAME"\" >> /home/ubuntu/django_project/config.py
+      - echo PSQL_USER=\""$PSQL_USER"\" >> /home/ubuntu/django_project/config.py
+      - echo PSQL_PASSWORD=\""$PSQL_PASSWORD"\" >> /home/ubuntu/django_project/config.py
+      - echo PSQL_HOST=\""$PSQL_HOST"\" >> /home/ubuntu/django_project/config.py
+      - echo PSQL_PORT=\""$PSQL_PORT"\" >> /home/ubuntu/django_project/config.py
+      - echo TMDB_API_KEY=\""$TMDB_API_KEY"\" >> /home/ubuntu/django_project/config.py
+      - echo RS_URL=\""$RS_URL"\" >> /home/ubuntu/django_project/config.py
+
   build:
     commands:
       - echo Building the application

@@ -37,8 +37,6 @@ class MovieInfo(models.Model):
         #managed = False
         db_table = 'movie_info'
 
-
-
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 

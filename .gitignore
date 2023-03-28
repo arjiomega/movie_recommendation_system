@@ -4,3 +4,4 @@ data/
 *.pem
 .env
 *.sqlite3
+config.py

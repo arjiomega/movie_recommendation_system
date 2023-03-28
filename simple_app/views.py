@@ -10,9 +10,16 @@ import requests
 import json
 import os
 
-tmdb_api_key = os.environ.get('TMDB_API_KEY')
+from pathlib import Path
+import sys
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(BASE_DIR)
+from config import *
+
+tmdb_api_key = TMDB_API_KEY
 base_url = 'https://api.themoviedb.org/3/'
-rs_url = os.environ.get('RS_URL')
+rs_url = RS_URL
 
 def loadUserData(user_id,get=['user_data']):
 
