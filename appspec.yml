@@ -13,6 +13,9 @@ hooks:
         timeout: 300
         runas: ubuntu
   AfterInstall:
+      - location: scripts/generate_vars.sh
+        timeout: 300
+        runas: ubuntu
       - location: scripts/instance_os_dependencies.sh
         timeout: 300
         runas: ubuntu

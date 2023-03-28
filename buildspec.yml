@@ -1,36 +1,21 @@
 version: 0.2
 
-env:
-  parameter-store:
-    SECRET_KEY: "SECRET_KEY"
-    PSQL_NAME: "PSQL_NAME"
-    PSQL_USER: "PSQL_USER"
-    PSQL_PASSWORD: "PSQL_PASSWORD"
-    PSQL_HOST: "PSQL_HOST"
-    PSQL_PORT: "PSQL_PORT"
-    TMDB_API_KEY: "TMDB_API_KEY"
-    RS_URL: "RS_URL"
+# env:
+#   parameter-store:
+#     SECRET_KEY: "SECRET_KEY"
+#     PSQL_NAME: "PSQL_NAME"
+#     PSQL_USER: "PSQL_USER"
+#     PSQL_PASSWORD: "PSQL_PASSWORD"
+#     PSQL_HOST: "PSQL_HOST"
+#     PSQL_PORT: "PSQL_PORT"
+#     TMDB_API_KEY: "TMDB_API_KEY"
+#     RS_URL: "RS_URL"
 
 phases:
   pre_build:
     commands:
       - echo Prebuild ops
-      - echo $(pwd)
       - pip3 install -r requirements.txt
-      - echo Preparing variables...
-      - rm -f /home/ubuntu/django_project/config.py
-      - if [ ! -d "/home/ubuntu/django_project/" ]; then
-            mkdir /home/ubuntu/django_project/;
-        fi
-      - echo SECRET_KEY=\""$SECRET_KEY"\" >> /home/ubuntu/django_project/config.py
-      - echo PSQL_NAME=\""$PSQL_NAME"\" >> /home/ubuntu/django_project/config.py
-      - echo PSQL_USER=\""$PSQL_USER"\" >> /home/ubuntu/django_project/config.py
-      - echo PSQL_PASSWORD=\""$PSQL_PASSWORD"\" >> /home/ubuntu/django_project/config.py
-      - echo PSQL_HOST=\""$PSQL_HOST"\" >> /home/ubuntu/django_project/config.py
-      - echo PSQL_PORT=\""$PSQL_PORT"\" >> /home/ubuntu/django_project/config.py
-      - echo TMDB_API_KEY=\""$TMDB_API_KEY"\" >> /home/ubuntu/django_project/config.py
-      - echo RS_URL=\""$RS_URL"\" >> /home/ubuntu/django_project/config.py
-
   build:
     commands:
       - echo Building the application
