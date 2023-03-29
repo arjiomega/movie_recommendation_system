@@ -14,7 +14,7 @@ sed -i 's/\[]/\["13.113.126.172"]/' /home/ubuntu/django_project/simple_django/se
 
 #This command collects all the static files used by the Django application and puts
 #them in a single directory.
-python manage.py collectstatic
+python3 manage.py collectstatic
 
 sudo service gunicorn restart
 sudo service nginx restart

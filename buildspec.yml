@@ -1,16 +1,5 @@
 version: 0.2
 
-# env:
-#   parameter-store:
-#     SECRET_KEY: "SECRET_KEY"
-#     PSQL_NAME: "PSQL_NAME"
-#     PSQL_USER: "PSQL_USER"
-#     PSQL_PASSWORD: "PSQL_PASSWORD"
-#     PSQL_HOST: "PSQL_HOST"
-#     PSQL_PORT: "PSQL_PORT"
-#     TMDB_API_KEY: "TMDB_API_KEY"
-#     RS_URL: "RS_URL"
-
 phases:
   pre_build:
     commands:

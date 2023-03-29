@@ -74,7 +74,7 @@
                 <h3>Genres</h3>
                 <p>{{genres_text}}</p>
                 <h3>Year: {{year}}</h3>
-                <form id="my-form">
+                <form id="my-form" method="POST">
                     {% csrf_token %}
                     <div class="row row-cols-4 row-cols-lg-4">
                         {% for movie in movies %}
@@ -114,29 +114,7 @@
         </script>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('#my-form input[type="checkbox"]').on('change', function() {
-                  var $col = $(this).closest('.col');
-                  var movieId = $col.find('input[name="gender"]').val();
-                  var select_movie = $('input[name="gender"]:checked').val();
-                  $.ajax({
-                    url: '{% url "update" %}',
-                    type: 'POST',
-                    data: {
-                      'select_movie': select_movie,
-                      'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
-                    },
-                    success: function(response) {
-                      console.log(response);
-                    },
-                    error: function(xhr) {
-                      console.log(xhr.responseText);
-                    }
-                  });
-                });
-              });
-        </script>
+        
 
         
 </body>

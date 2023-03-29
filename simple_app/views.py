@@ -37,10 +37,10 @@ def loadUserData(user_id,get=['user_data']):
             movie_detail = json.loads(response.text)
             user_data['movies_watched'].append({"tmdb_id":movie_info.tmdb_id,
                                                 "title":movie_detail['original_title'],
-                                                "rating":int(movie_info.rating)
+                                                "rating":int(movie_info.rating) if movie_info.rating is not None else None
                                                 })
 
-    #MOVIE INFO
+    #MOVIE INFO (genre_name: genre_id)
     if 'movie_info' in get:
         url = f'{base_url}/genre/movie/list?api_key={tmdb_api_key}&language=en-US'
         response = requests.get(url)
@@ -256,6 +256,8 @@ def update_MyUser(request):
 
     user_data = request.session.get('user_data')
 
+    print(user_data)
+
     if 'user_id' in request.session:
         context['user_id'] = request.session.get('user_id')
         context['session'] = True
@@ -265,8 +267,13 @@ def update_MyUser(request):
         print('session not available')
 
     # List of genres
-    get_genre_id = user_data['get_genre_id']
+    if 'get_genre_id' in request.session:
+        get_genre_id = request.session.get('get_genre_id')
+    else:
+        get_genre_id = user_data['get_genre_id']
+        request.session['get_genre_id'] = get_genre_id
 
+    context['genres'] = list(get_genre_id.keys())
     year = ""
     load_genres = ""
     context['genres_text'] = ''
@@ -297,20 +304,18 @@ def update_MyUser(request):
         print("------------------POST-------------------------")
         select_movie = request.POST.getlist('select_movie')
         user_id = request.session.get('user_id')
-
+        print(select_movie)
         if select_movie:
             for tmdb_id in select_movie:
                 #CHECK IF MOVIE_ID ALREADY EXISTS FOR THE USER_ID
                 if not UserRating.objects.filter(user_id=int(user_id),tmdb_id=int(tmdb_id)).exists():
                     add_movie = UserRating(user_id = int(user_id),tmdb_id=int(tmdb_id))
-                    print(f"ADD TO USERRATING MODEL> USER ID: {add_movie.user} MOVIE_ID: {add_movie.tmdb_id}")
                     add_movie.save()
                     context['success'] = f"ADD TO USER ID: {add_movie.user} MOVIE_IDs: {select_movie}"
                 else:
                     context['error'] = f'Movie ID {select_movie} for User ID {user_id} already exists'
-                    print(f'Movie ID {tmdb_id} for User ID {user_id} already exists')
 
-        user_data = loadUserData(user_id)
+        user_data['movies_watched'] = loadUserData(user_id)['movies_watched']
 
         context['movies_watched'] = [movie['tmdb_id'] for movie in user_data['movies_watched']]
         context['movie_names'] = [movie['title'] for movie in user_data['movies_watched']]
