@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
+# remove config.py if it exists
 rm -f /home/ubuntu/django_project/config.py
+
+# create config.py file
+touch /home/ubuntu/django_project/config.py
+
+# add permission
+sudo chmod 777 /home/ubuntu/django_project/config.py
 
 # Array of parameter names
 PARAM_NAMES=(
