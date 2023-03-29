@@ -12,7 +12,7 @@ touch /home/ubuntu/django_project/config.py
 
 # add permission
 echo add permission to config.py
-sudo chmod 777 /home/ubuntu/django_project/config.py
+chmod 777 /home/ubuntu/django_project/config.py
 
 # Array of parameter names
 PARAM_NAMES=(
