@@ -1,7 +1,1 @@
-**/__pycache__/
-data/
-*.sql
-*.pem
-.env
-*.sqlite3
-config.py
+env/
