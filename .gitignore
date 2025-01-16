@@ -1,1 +1,26 @@
 env/
+.env
+
+# Byte-compiled files
+*.pyc
+*.pyo
+
+# Cython build artifacts
+*.c
+*.so
+
+# Virtual environments
+venv/
+env/
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+__pycache__/
