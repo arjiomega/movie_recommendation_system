@@ -1,0 +1,44 @@
+/* Navbar container */
+.navbar-custom {
+    background-color: #1c1c1c; /* Dark Gray */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  }
+  
+  .navbar-custom .navbar-brand {
+    color: #ffffff; /* White text for the brand */
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar-custom .navbar-brand:hover {
+    color: #FF5733; /* Accent color on hover */
+  }
+  
+  .navbar-custom .nav-link {
+    color: #ffffff; /* White text for links */
+    font-size: 1rem;
+    padding: 10px 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .navbar-custom .nav-link:hover {
+    color: #FF5733; /* Accent color on hover */
+    text-decoration: underline;
+  }
+  
+  .navbar-custom .nav-link.active {
+    color: #FF5733; /* Accent color for active links */
+    font-weight: bold;
+  }
+  
+  /* Removed customizations for the toggle button */
+  
+  /* Responsive navbar */
+  @media (max-width: 768px) {
+    .navbar-custom .nav-link {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+    }
+  }
+  

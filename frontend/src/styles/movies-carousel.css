@@ -1,0 +1,30 @@
+.movies-carousel-container {
+    background-color: blueviolet;
+}
+
+.carousel-title {
+    color: #000000; /* White text for the brand */
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.carousel-title:hover {
+    color: #FF5733;
+}
+
+.card {
+width: 18rem;
+}
+
+@media (max-width: 1200px) {
+.card {
+    width: 14rem;
+}
+}
+
+@media (max-width: 768px) {
+.card {
+    width: 12rem;
+}
+}
