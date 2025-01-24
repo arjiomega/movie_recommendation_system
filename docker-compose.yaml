@@ -49,8 +49,10 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.10.4}
-  # build: .
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.10.4}
+  build:
+    context: .
+    dockerfile: ./airflow/Dockerfile
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -73,11 +75,23 @@ x-airflow-common:
     # If you want to use it, outcomment it and replace airflow.cfg with the name of your config file
     # AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
     TMDB_API_KEY: ${TMDB_API_KEY}
+    # POSTGRES
+    DBT_POSTGRES_HOST_DEV: ${DBT_POSTGRES_HOST_DEV}
+    DBT_POSTGRES_USER_DEV: ${DBT_POSTGRES_USER_DEV}
+    DBT_POSTGRES_PASSWORD_DEV: ${DBT_POSTGRES_PASSWORD_DEV}
+    DBT_POSTGRES_DB_DEV: ${DBT_POSTGRES_DB_DEV}
+    DBT_POSTGRES_SCHEMA_DEV: ${DBT_POSTGRES_SCHEMA_DEV}
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-.}/project_dbt/dbt_analyses:/opt/airflow/dbt_analyses
+    - ${AIRFLOW_PROJ_DIR:-.}/project_dbt/dbt_macros:/opt/airflow/dbt_macros
+    - ${AIRFLOW_PROJ_DIR:-.}/project_dbt/dbt_models:/opt/airflow/dbt_models
+    - ${AIRFLOW_PROJ_DIR:-.}/project_dbt/dbt_seeds:/opt/airflow/dbt_seeds
+    - ${AIRFLOW_PROJ_DIR:-.}/project_dbt/dbt_snapshots:/opt/airflow/dbt_snapshots
+    - ${AIRFLOW_PROJ_DIR:-.}/project_dbt/dbt_tests:/opt/airflow/dbt_tests
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -88,13 +102,17 @@ x-airflow-common:
 
 services:
   postgres:
-    image: postgres:13
+    image: pgvector/pgvector:pg17
+    container_name: pgvector-db
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
+      - ${AIRFLOW_PROJ_DIR:-.}/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s

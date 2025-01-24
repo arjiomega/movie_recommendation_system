@@ -1,0 +1,4 @@
+python-dotenv
+dbt-core
+dbt-bigquery
+dbt-postgres
