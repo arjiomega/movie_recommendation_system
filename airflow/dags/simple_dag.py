@@ -21,9 +21,9 @@ default_args = {
 }
 
 with DAG(
-    dag_id="tmdb_dag_2.1",
+    dag_id="tmdb_dag_3.0",
     default_args=default_args,
-    start_date=datetime(2024, 10, 1),
+    start_date=datetime(2000, 1, 1),
     schedule_interval="@monthly",
     max_active_runs=5,
     catchup=True,

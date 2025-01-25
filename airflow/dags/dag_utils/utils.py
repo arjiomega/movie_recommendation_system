@@ -23,8 +23,7 @@ class StringFormatter:
         elif 'BOOLEAN' in column_type:
             return  str(value).upper()
         elif 'JSONB' in column_type:
-            transformed_value = json.dumps(value).replace("'", "''")
-            return f"'{transformed_value}'"
+            return f"'{json.dumps(value).replace("'", "''")}'" if value != 'NULL' else value
         else:
             raise ValueError(f"'{column_type}' is an invalid column_type.")
         
