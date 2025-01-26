@@ -1,0 +1,16 @@
+version: 1
+
+sources:
+  - name: staging
+    database: "{{ env_var('DBT_POSTGRES_DB_DEV') }}"
+    schema: "{{ env_var('DBT_POSTGRES_SCHEMA_STAGING') }}"
+
+    tables:
+      - name: raw_movies
+      - name: raw_reviews
+      - name: raw_genres
+      - name: raw_credits
+
+  - name: data_warehouse
+    database: "{{ env_var('DBT_POSTGRES_DB_DEV') }}"
+    schema: "{{ env_var('DBT_POSTGRES_SCHEMA_WAREHOUSE') }}"
