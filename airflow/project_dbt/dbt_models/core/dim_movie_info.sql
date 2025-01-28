@@ -5,7 +5,7 @@
     ) 
 }}
 
-SELECT
+SELECT DISTINCT
     mov.id as movie_id,
     mov.title,
     mov.original_title,

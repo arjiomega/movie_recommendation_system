@@ -13,7 +13,7 @@ WITH movies_in_increment as (
             mov.release_date < '{{ var("end_date") }}' -- 2020-02-01
     {% endif %}
 )
-SELECT
+SELECT DISTINCT
     cast_element ->> 'id' AS cast_id,
     cast_element ->> 'name' AS "name",
     cast_element ->> 'adult' AS adult,
