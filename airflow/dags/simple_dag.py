@@ -13,6 +13,7 @@ from ingest_tasks import (
     GetMovieIds
 )
 from setup_db_tasks import SetupDB, create_schemas
+from warehouse_tasks import WarehouseTasks
 
 default_args = {
     "owner": "Richard Omega",
@@ -65,11 +66,15 @@ with DAG(
         tmdb_api_client=tmdb_api_client
     )
 
+    # WAREHOUSE TASKS
+    warehouse_tasks = WarehouseTasks()
+
     ## SETUP DB > GET MOVIE IDs > INGEST
     create_schema >> setup_db(table_name="staging_raw_movies_table") >> [
         setup_db(table_name="staging_raw_genres_table"),
         setup_db(table_name="staging_raw_reviews_table"),
         setup_db(table_name="staging_raw_credits_table")
     ] >> get_movie_ids() >> ingest_movies() >> [
-            ingest_reviews(), ingest_credits(), ignest_genres()]
+            ingest_reviews(), ingest_credits(), ignest_genres()
+    ] >> warehouse_tasks.build_data_warehouse()
         
