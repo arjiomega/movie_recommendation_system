@@ -13,7 +13,7 @@ WITH movies_in_increment as (
             mov.release_date < '{{ var("end_date") }}' -- 2020-02-01
     {% endif %}
 )
-SELECT
+SELECT DISTINCT
     mov.belongs_to_collection ->> 'id' AS collection_id,
     mov.belongs_to_collection ->> 'name' AS collection_name,
     mov.belongs_to_collection ->> 'poster_path' AS poster_path,

@@ -13,7 +13,7 @@ WITH movies_in_increment as (
             mov.release_date < '{{ var("end_date") }}' -- 2020-02-01
     {% endif %}
 )
-SELECT
+SELECT DISTINCT
     production_company_element ->> 'id' AS company_id,
     production_company_element ->> 'origin_country' AS country_id,
     production_company_element ->> 'name' AS company_name,

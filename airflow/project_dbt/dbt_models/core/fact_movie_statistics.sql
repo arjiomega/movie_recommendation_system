@@ -19,7 +19,7 @@ movies_in_increment as (
             mov.release_date < '{{ var("end_date") }}' -- 2020-02-01
     {% endif %}
 )
-SELECT 
+SELECT DISTINCT
     mov.id as movie_id,
     mov.vote_count,
     mov.vote_average,

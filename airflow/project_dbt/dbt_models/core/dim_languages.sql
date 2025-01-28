@@ -13,7 +13,7 @@ WITH movies_in_increment as (
             mov.release_date < '{{ var("end_date") }}' -- 2020-02-01
     {% endif %}
 )
-SELECT
+SELECT DISTINCT
     language_element ->> 'iso_639_1' AS language_id,
     language_element ->> 'name' AS language_name,
     language_element ->> 'english_name' AS english_name
