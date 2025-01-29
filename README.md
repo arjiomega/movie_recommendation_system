@@ -20,6 +20,8 @@ This project showcases an end-to-end data engineering pipeline integrated with a
     Analytics: Data is visualized using Power BI
     Machine Learning (Planned): Data will be used for movie recommendations
 
+![](media/star_schema.png)
+
 ### ⚡ Technical Stack
 | Component | Technology Used |
 | -- | -- |
