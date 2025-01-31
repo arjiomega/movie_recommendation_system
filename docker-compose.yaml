@@ -80,7 +80,9 @@ x-airflow-common:
     DBT_POSTGRES_USER_DEV: ${DBT_POSTGRES_USER_DEV}
     DBT_POSTGRES_PASSWORD_DEV: ${DBT_POSTGRES_PASSWORD_DEV}
     DBT_POSTGRES_DB_DEV: ${DBT_POSTGRES_DB_DEV}
-    DBT_POSTGRES_SCHEMA_DEV: ${DBT_POSTGRES_SCHEMA_DEV}
+    DBT_POSTGRES_SCHEMA_DEV: ${DBT_POSTGRES_SCHEMA_WAREHOUSE}
+    DBT_POSTGRES_SCHEMA_STAGING: ${DBT_POSTGRES_SCHEMA_STAGING}
+    DBT_POSTGRES_SCHEMA_WAREHOUSE: ${DBT_POSTGRES_SCHEMA_WAREHOUSE}
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
@@ -311,9 +313,10 @@ services:
       DEBUG: '1'
       SECRET_KEY: ${DJANGO_SECRET_KEY}
       DJANGO_SETTINGS_MODULE: 'backend.settings'
+      POSTGRESQL_HOST: 'postgres'
       DATABASE_URL: 'postgres://airflow:airflow@postgres:5432/airflow'
     volumes:
-      - ./backend:/backend  # Mount your Django app for live updates
+      - ./:/backend  # Mount your Django app for live updates
     ports:
       - "8000:8000"  # Map Django's default port
     depends_on:
