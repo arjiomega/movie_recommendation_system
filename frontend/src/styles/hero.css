@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.hero-container {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align left */
+    padding: 50px;
+    background-image: url(https://image.tmdb.org/t/p/original${movie.backdrop_path});
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent overlay */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    position: relative;
+    background-repeat: no-repeat;
+    background-blend-mode: overlay; /* Blend the image with the overlay */
+  }
+
+/* Adjust gradient to smoothly fade into body background */
+.hero-container::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 250px; /* Adjust fade height */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #141414 100%);
+  }
+
+/* Hero content should be on top of the fade effect */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align all items to the top */
+  max-width: 50%; /* Adjust if needed */
+  position: relative;
+  z-index: 2;
+  opacity: 0; /* Start hidden for the fade animation */
+}
+
+/* Title Styling */
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: white;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+  margin-bottom: 10px; /* Space before rating */
+}
+
+/* Hero Info Styling */
+.hero-info {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px; /* Add space between year/rating and overview */
+}
+
+.rating-icon {
+  color: gold;
+}
+
+.year-icon {
+  color: #ffffff;
+}
+
+.hero-overview {
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* Optional animation for the title */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Trigger animation when .fadeUp class is added */
+.hero-content.fadeUp {
+  animation: fadeUp 1s ease-in-out forwards;
+}
+
+/* Adjust for larger screens */
+@media (min-width: 1200px) {
+  .hero-container {
+    min-height: 600px; /* Larger height on large screens */
+    padding: 100px; /* More padding on large screens */
+  }
+
+  .hero-title {
+    font-size: 4rem; /* Larger title font size */
+  }
+
+  .hero-info {
+    font-size: 1.5rem; /* Larger font size for rating and year */
+  }
+}
