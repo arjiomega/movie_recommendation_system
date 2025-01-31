@@ -19,7 +19,8 @@ TABLE_NAME_TYPE = Literal[
 
 def create_schemas(postgres_executor: PostgresQueryExecutor):
     query = """CREATE SCHEMA IF NOT EXISTS staging_tmdb_data;
-    CREATE SCHEMA IF NOT EXISTS dw_movies;"""
+    CREATE SCHEMA IF NOT EXISTS dw_movies;
+    CREATE SCHEMA IF NOT EXISTS app;"""
     def wrapper():
         postgres_executor.execute_query(query)
     return PythonOperator(
