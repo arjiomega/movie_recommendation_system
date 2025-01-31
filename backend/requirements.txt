@@ -5,3 +5,4 @@ djangorestframework
 django-extensions
 django-environ
 python-dateutil
+django-cors-headers

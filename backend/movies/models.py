@@ -52,9 +52,21 @@ class MovieStatistics(models.Model):
         movies = (
             MovieInfo.objects
             .filter(release_date__range=[one_month_ago, today])
-            .annotate(popularity=F('moviestatistics__popularity'))
+            .annotate(
+                popularity=F('moviestatistics__popularity'),
+                vote_average=F('moviestatistics__vote_average')
+            )
             .order_by('-popularity')
-            .values("movie_id", "title", "release_date", "popularity", "backdrop_path", "poster_path")[:get_top_N]
+            .values(
+                "movie_id", 
+                "title", 
+                "release_date", 
+                "popularity", 
+                "vote_average",
+                "backdrop_path", 
+                "poster_path",
+                "overview"
+            )[:get_top_N]
         )
 
         return list(movies)

@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',  
     'django_extensions',
-    'movies'
+    'corsheaders',
+    'movies',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -61,6 +63,21 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://frontend',  # Replace with your React app's URL
+    'http://localhost:3000',
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    # 'POST',
+    # 'PUT',
+    # 'PATCH',
+    # 'DELETE',
+    # 'OPTIONS',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -95,7 +112,7 @@ DATABASES = {
         'PASSWORD': 'airflow',
         'HOST': os.environ.get("POSTGRESQL_HOST",'localhost'),
         'PORT': '5432',
-        "OPTIONS": {"options": "-c search_path=dw_movies,public,staging_tmdb_data,analytics"}
+        "OPTIONS": {"options": "-c search_path=dw_movies,public,staging_tmdb_data,analytics,app"}
     }
 }
 
@@ -140,3 +157,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
