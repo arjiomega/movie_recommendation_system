@@ -70,3 +70,30 @@ class MovieStatistics(models.Model):
         )
 
         return list(movies)
+    
+    @classmethod
+    def get_top_movies(cls):
+        today = datetime.date.today()
+        one_month_ago = today - relativedelta(months=2)
+
+        movies = (
+            MovieInfo.objects
+            .filter(release_date__range=[one_month_ago, today])
+            .annotate(
+                popularity=F('moviestatistics__popularity'),
+                vote_average=F('moviestatistics__vote_average')
+            )
+            .order_by('-popularity')
+            .values(
+                "movie_id", 
+                "title", 
+                "release_date", 
+                "popularity", 
+                "vote_average",
+                "backdrop_path", 
+                "poster_path",
+                "overview"
+            )
+        )
+
+        return list(movies)
