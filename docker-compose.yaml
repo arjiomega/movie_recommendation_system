@@ -329,8 +329,8 @@ services:
     container_name: frontend
     ports:
       - "3000:80"  # Exposing React app on port 3000
-    depends_on:
-      - backend  # Make sure React starts after backend is ready
+    # depends_on:
+    #   - backend  # Make sure React starts after backend is ready
 
   # pgAdmin service
   pgadmin:

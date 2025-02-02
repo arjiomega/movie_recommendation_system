@@ -66,19 +66,21 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://frontend',  # Replace with your React app's URL
-    'http://localhost:3000',
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOW_METHODS = [
-    'GET',
-    # 'POST',
-    # 'PUT',
-    # 'PATCH',
-    # 'DELETE',
-    # 'OPTIONS',
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://frontend',  # Replace with your React app's URL
+#     'http://localhost:3000',
+# ]
+
+# CORS_ALLOW_METHODS = [
+#     'GET',
+#     'POST',
+#     # 'PUT',
+#     # 'PATCH',
+#     # 'DELETE',
+#     # 'OPTIONS',
+# ]
 
 ROOT_URLCONF = 'backend.urls'
 
