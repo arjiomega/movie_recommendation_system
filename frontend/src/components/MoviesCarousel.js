@@ -9,13 +9,36 @@ import Hero from './Hero';  // Make sure to import Hero
 const MovieCard = ({ movie, onHover, onClick }) => {
   const { poster_path, title } = movie;
 
+  const [cardSize, setCardSize] = useState('18rem');
+
+    useEffect(() => {
+        const cardResize = () => {
+            const windowWidth = window.innerWidth;
+            
+            // Smooth resizing using a scaling factor
+            const newCardSize = Math.max(10, Math.min(windowWidth / 70, 18)); // Adjust scaling factor (70) for smoother resizing
+            setCardSize(`${newCardSize}rem`);
+        };
+
+        // Initial resize
+        cardResize();
+
+        // Add event listener for resizing
+        window.addEventListener('resize', cardResize);
+
+        // Cleanup on component unmount
+        return () => {
+            window.removeEventListener('resize', cardResize);
+        };
+    }, []);
+
   return (
     <div
       onMouseEnter={() => onHover(movie)} // Trigger hover with movie data
       onClick={() => onClick(movie)} // Trigger click with movie data
     >
       <Card
-        style={{ width: '18rem' }}
+        style={{ width: `${cardSize}`, cursor: 'pointer' }}
       >
         <Card.Img variant="top" src={poster_path ? `https://image.tmdb.org/t/p/w500${poster_path}` : "https://via.placeholder.com/500"} alt={title} />
       </Card>

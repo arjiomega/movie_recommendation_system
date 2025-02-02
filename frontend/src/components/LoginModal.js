@@ -1,8 +1,58 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-
-const LoginModal = ({ show, handleClose }) => {
+import axios from 'axios';
+import "../styles/login_modal.css";
+const LoginModal = ({ show, handleClose, setIsLoggedIn, setUserEmail }) => {
   const [isRegistering, setIsRegistering] = useState(false); // State to toggle login/register
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (isRegistering) {
+      try {
+        const response = await axios.post('http://localhost:8000/api/users/register/', {
+          email: formData.email,
+          password: formData.password,
+        });
+        alert(response.data.message);
+        setIsRegistering(false);
+      } catch (error) {
+        console.error(error.response);
+        alert('Error during registration');
+      }
+    } else {
+      try {
+        const response = await axios.post('http://localhost:8000/api/users/login/', {
+          email: formData.email,
+          password: formData.password,
+        });
+  
+        if (response.status === 200) {
+          const data = response.data;
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("refresh_token", data.refresh_token);
+          localStorage.setItem("user_email", formData.email); // ✅ Store email
+          
+          setIsLoggedIn(true);
+          setUserEmail(formData.email); // ✅ Update NavBar state
+  
+          handleClose(); // Close modal on success
+        }
+      } catch (error) {
+        console.error("Login Error:", error.response || error.message);
+        alert(error.response?.data?.message || "An error occurred.");
+      }
+    }
+  };
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -13,30 +63,30 @@ const LoginModal = ({ show, handleClose }) => {
         {isRegistering ? (
           <>
             <p className="text-center h4 fw-bold mb-3">Sign up</p>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>Your Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter your name" />
-              </Form.Group>
-
+            <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
                 <Form.Label>Your Email</Form.Label>
-                <Form.Control type="email" placeholder="Enter your email" />
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Enter password" />
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
+                />
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Repeat your password</Form.Label>
-                <Form.Control type="password" placeholder="Repeat password" />
-              </Form.Group>
-
-              <Form.Check className="mb-3" type="checkbox" label="I agree to the Terms of Service" />
-
-              <Button variant="primary" type="submit" className="w-100">
+              <Button variant="dark" type="submit" className="w-100">
                 Register
               </Button>
             </Form>
@@ -50,18 +100,30 @@ const LoginModal = ({ show, handleClose }) => {
         ) : (
           <>
             <p className="text-center h4 fw-bold mb-3">Login</p>
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="Enter your email" />
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Enter password" />
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
+                />
               </Form.Group>
 
-              <Button variant="primary" type="submit" className="w-100">
+              <Button variant="dark" type="submit" className="w-100">
                 Login
               </Button>
             </Form>
