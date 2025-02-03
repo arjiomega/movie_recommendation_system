@@ -145,8 +145,6 @@ const DisplayMovieInfoModal = ({ showModal, handleCloseModal, selectedMovie }) =
                         alt={selectedMovie.title} 
                         className="img-fluid"
                     />
-                    <p>MOVIE ID: {selectedMovie.movie_id}</p>
-                    <p>ACCESS TOKEN: {localStorage.getItem("access_token")}</p>
                 </Modal.Body>
 
                 <Modal.Footer>
