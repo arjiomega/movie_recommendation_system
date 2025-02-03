@@ -53,7 +53,6 @@ class LoginUser(APIView):
         except get_user_model().DoesNotExist:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         
-
 class UserMovieView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  # Only logged-in users can access
@@ -62,6 +61,7 @@ class UserMovieView(APIView):
         user_movies = UserMovie.objects.filter(user_id=request.user)  # Fetch movies for the logged-in user
         data = [
             {
+                "movie_id": um.movie_id.movie_id,
                 "movie_title": um.movie_id.title,
                 "rating": um.rating,
                 "review": um.review
@@ -89,3 +89,20 @@ class UserMovieView(APIView):
         )
 
         return Response({"message": "Rating submitted successfully"}, status=status.HTTP_201_CREATED)
+    
+    def delete(self, request):
+        """Allow users to delete their movie rating and review"""
+        user = request.user  # Get the logged-in user
+        movie_id = request.data.get("movie_id")
+
+        try:
+            movie = MovieInfo.objects.get(movie_id=movie_id)
+        except MovieInfo.DoesNotExist:
+            return Response({"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            user_movie = UserMovie.objects.get(user_id=user, movie_id=movie)
+            user_movie.delete()
+            return Response({"message": "Rating deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except UserMovie.DoesNotExist:
+            return Response({"error": "Rating not found"}, status=status.HTTP_404_NOT_FOUND)
