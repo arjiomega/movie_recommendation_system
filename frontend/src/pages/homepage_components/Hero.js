@@ -1,6 +1,6 @@
 // src/components/Hero.js
 import React, { useEffect, useState } from "react";
-import "../styles/hero.css"; // Import the styles
+import "../../styles/hero.css"; // Import the styles
 
 const Hero = ({ movie }) => {
   const [animate, setAnimate] = useState(false); // State to trigger the animation

@@ -1,0 +1,7 @@
+.Profile {
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f0f0; /* Light background color */
+    color: #333; /* Dark text color */
+    min-height: 100vh; /* Ensure it covers the full viewport height */
+  }

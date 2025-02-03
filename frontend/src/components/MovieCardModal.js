@@ -48,7 +48,7 @@ API.interceptors.request.use(config => {
 });
 
 
-const AddUserRating = async (selectedMovie, rating) => {
+export const AddUserRating = async (selectedMovie, rating) => {
     try {
         const response = await API.post(
             'users/user-movies/',

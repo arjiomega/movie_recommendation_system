@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Carousel, Stack } from 'react-bootstrap';
 import axios from 'axios';
-import "../styles/movies-carousel.css";
+import "../../styles/movies-carousel.css";
 import Hero from './Hero';  // Make sure to import Hero
 
 const MovieCard = ({ movie, onHover, onClick }) => {
